@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "esnext",
+    "module": "esnext",
+    "allowJs": false,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "~/*": ["src/*"],
+      "@/*": ["./*"],
+    },
+    "lib": [
+      "dom",
+      "esnext",
+    ]
+  },
+  "exclude": ["node_modules", "dist"]
+}
