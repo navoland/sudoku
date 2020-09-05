@@ -1,6 +1,6 @@
 {
-  "name": "sokoban",
-  "version": "1.7.3",
+  "name": "sudoku",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "browserslist": [
@@ -10,6 +10,7 @@
   "scripts": {
     "start": "webpack -w",
     "build": "webpack -p",
+    "lint": "eslint src --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "JetLu",

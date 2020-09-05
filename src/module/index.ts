@@ -1,4 +1,2 @@
-export * from './enum'
+export {default as grid} from './grid'
 export * as sound from './sound'
-export {default as Ground} from './Ground'
-export {default as gamepad} from './gamepad'

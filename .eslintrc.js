@@ -35,10 +35,13 @@ module.exports = {
     CDN: true,
     PROD: true,
     PIXI: true,
+    IEvent: true,
+    IScene: true,
     canvas: true,
     screen: 'off',
     CLOUD_ID: true,
     GameGlobal: true,
+    ILevelData: true,
     dragonBones: true,
   }
 }

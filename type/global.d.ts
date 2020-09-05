@@ -6,6 +6,8 @@ declare const CLOUD_ID: string
 /** for wechat */
 declare const canvas: HTMLCanvasElement
 
+declare type ILevelData = [string, string, number, number, boolean]
+
 declare const GameGlobal: typeof window & {
   /** 加载的字体 */
   font: string

@@ -13,7 +13,8 @@ const pixelRatio = Math.min(2, devicePixelRatio)
 const renderer = new PIXI.Renderer({
   view: canvas,
   antialias: true,
-  backgroundColor: 0,
+  transparent: false,
+  backgroundColor: 0xffffff,
   width: width * pixelRatio,
   height: height * pixelRatio,
 })

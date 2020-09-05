@@ -1,8 +1,11 @@
-import {stage} from '~/core'
+// import {stage} from '~/core'
+import {game, preload} from '~/scene'
 
-const g  = new PIXI.Graphics()
-  .beginFill(0xffcc33, .5)
-  .drawRect(0, 0, 100, 100)
-  .endFill()
+GameGlobal.design = {
+  width: 750,
+  height: 1334
+}
 
-stage.addChild(g)
+preload().then(() => {
+  game.show()
+}).catch(console.log)

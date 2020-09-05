@@ -1,0 +1,28 @@
+{
+"frames": {
+	"icon.eraser.png": {
+		"frame": {"x":0, "y":132, "w":128, "h":119},
+		"spriteSourceSize": {"x":0,"y":4,"w":128,"h":128},
+		"sourceSize": {"w":128,"h":128},
+		"anchor": {"x":0.5,"y":0.5}
+	},
+	"icon.pencil.png": {
+		"frame": {"x":0, "y":0, "w":128, "h":128},
+		"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+		"sourceSize": {"w":128,"h":128},
+		"anchor": {"x":0.5,"y":0.5}
+	},
+	"icon.tip.png": {
+		"frame": {"x":132, "y":0, "w":96, "h":124},
+		"spriteSourceSize": {"x":16,"y":2,"w":128,"h":128},
+		"sourceSize": {"w":128,"h":128},
+		"anchor": {"x":0.5,"y":0.5}
+	}
+
+},
+"meta": {
+	"image": "ui.png",
+	"size": {"w": 232, "h": 255},
+	"scale": "1"
+}
+}

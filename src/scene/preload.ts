@@ -1,28 +1,11 @@
 import {store, createPromise} from '~/util'
 import {fs, download} from '~/module/wx'
 
-const {factory} = dragonBones.PixiFactory
 const {mkdir, access, read, ROOT} = fs
 const dirs = ['font', 'anime', 'sound', 'texture']
 const files = [
   {name: 'texture/ui.png', version: '1.0.0'},
   {name: 'texture/ui.json', version: '1.0.0'},
-  {name: 'texture/item.png', version: '1.0.0'},
-  {name: 'texture/item.json', version: '1.0.0'},
-  {name: 'sound/set.mp3', version: '1.0.0'},
-  {name: 'sound/bgm.mp3', version: '1.0.0'},
-  {name: 'sound/tap.mp3', version: '1.0.0'},
-  {name: 'sound/back.mp3', version: '1.0.0'},
-  {name: 'sound/good.mp3', version: '1.0.0'},
-  {name: 'sound/undo.mp3', version: '1.0.0'},
-  {name: 'sound/replay.mp3', version: '1.0.0'},
-  {name: 'sound/amazing.mp3', version: '1.0.0'},
-  {name: 'sound/excellent.mp3', version: '1.0.0'},
-  {name: 'sound/unbelievable.mp3', version: '1.0.0'},
-  {name: 'anime/sokoban_tex.png', version: '1.0.0'},
-  {name: 'anime/sokoban_tex.json', version: '1.0.0'},
-  {name: 'anime/sokoban_ske.json', version: '1.0.0'},
-  {name: 'font/Raleway-SemiBold.ttf', version: '1.0.0'},
 ]
 
 const forceUpdate = false
@@ -45,18 +28,8 @@ export default async function() {
     return `${ROOT}/${file.name}`
   }))
 
-  GameGlobal.font = wx.loadFont(`${ROOT}/font/Raleway-SemiBold.ttf`)
-
-  // 解析骨骼动画
-  factory.parseDragonBonesData(JSON.parse(await read('anime/sokoban_ske.json', {encoding: 'utf-8'}) as string))
-  factory.parseTextureAtlasData(
-    JSON.parse(await read('anime/sokoban_tex.json', {encoding: 'utf-8'}) as string),
-    PIXI.Texture.from(`${ROOT}/anime/sokoban_tex.png`),
-  )
-
   await Promise.all([
     parse(items[0], items[1]),
-    parse(items[2], items[3]),
   ])
 }
 

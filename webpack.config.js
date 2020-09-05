@@ -53,9 +53,9 @@ const conf = {
   plugins: [
     new webpack.DefinePlugin({
       PROD: JSON.stringify(prod),
-      CLOUD_ID: JSON.stringify('sokoban-j5n2j'),
+      CLOUD_ID: JSON.stringify('colloc-dev'),
       VERSION: JSON.stringify(require('./package.json').version),
-      CDN: JSON.stringify('cloud://sokoban-j5n2j.736f-sokoban-j5n2j-1259687088')
+      CDN: JSON.stringify('cloud://colloc-dev.636f-colloc-dev-1258618978')
     }),
 
     new webpack.ProvidePlugin({
