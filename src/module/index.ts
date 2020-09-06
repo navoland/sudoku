@@ -1,2 +1,5 @@
-export {default as grid} from './grid'
+export * from './enum'
 export * as sound from './sound'
+export * as btnBack from './btnBack'
+export {default as grid} from './grid'
+export {default as chart} from './chart'

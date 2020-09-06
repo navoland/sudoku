@@ -10,6 +10,7 @@ const stage = new PIXI.Container()
 const monitor = new PIXI.utils.EventEmitter()
 const pixelRatio = Math.min(2, devicePixelRatio)
 
+
 const renderer = new PIXI.Renderer({
   view: canvas,
   antialias: true,

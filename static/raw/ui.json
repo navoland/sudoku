@@ -1,19 +1,43 @@
 {
 "frames": {
+	"button.png": {
+		"frame": {"x":0, "y":0, "w":130, "h":130},
+		"spriteSourceSize": {"x":0,"y":0,"w":130,"h":130},
+		"sourceSize": {"w":130,"h":130},
+		"anchor": {"x":0.5,"y":0.5}
+	},
+	"icon.back.png": {
+		"frame": {"x":132, "y":257, "w":116, "h":117},
+		"spriteSourceSize": {"x":7,"y":5,"w":128,"h":128},
+		"sourceSize": {"w":128,"h":128},
+		"anchor": {"x":0.5,"y":0.5}
+	},
 	"icon.eraser.png": {
-		"frame": {"x":0, "y":132, "w":128, "h":119},
+		"frame": {"x":132, "y":134, "w":128, "h":119},
 		"spriteSourceSize": {"x":0,"y":4,"w":128,"h":128},
 		"sourceSize": {"w":128,"h":128},
 		"anchor": {"x":0.5,"y":0.5}
 	},
+	"icon.medal.png": {
+		"frame": {"x":252, "y":257, "w":75, "h":114},
+		"spriteSourceSize": {"x":26,"y":7,"w":128,"h":128},
+		"sourceSize": {"w":128,"h":128},
+		"anchor": {"x":0.5,"y":0.5}
+	},
 	"icon.pencil.png": {
-		"frame": {"x":0, "y":0, "w":128, "h":128},
+		"frame": {"x":0, "y":134, "w":128, "h":128},
 		"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
 		"sourceSize": {"w":128,"h":128},
 		"anchor": {"x":0.5,"y":0.5}
 	},
+	"icon.task.png": {
+		"frame": {"x":134, "y":0, "w":124, "h":128},
+		"spriteSourceSize": {"x":2,"y":0,"w":128,"h":128},
+		"sourceSize": {"w":128,"h":128},
+		"anchor": {"x":0.5,"y":0.5}
+	},
 	"icon.tip.png": {
-		"frame": {"x":132, "y":0, "w":96, "h":124},
+		"frame": {"x":262, "y":0, "w":96, "h":124},
 		"spriteSourceSize": {"x":16,"y":2,"w":128,"h":128},
 		"sourceSize": {"w":128,"h":128},
 		"anchor": {"x":0.5,"y":0.5}
@@ -22,7 +46,7 @@
 },
 "meta": {
 	"image": "ui.png",
-	"size": {"w": 232, "h": 255},
+	"size": {"w": 362, "h": 378},
 	"scale": "1"
 }
 }

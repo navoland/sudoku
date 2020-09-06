@@ -60,7 +60,6 @@ const conf = {
 
     new webpack.ProvidePlugin({
       PIXI: 'pixi.js',
-      dragonBones: 'dragonbones.js'
     })
   ],
 

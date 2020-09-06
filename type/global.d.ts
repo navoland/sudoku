@@ -16,8 +16,10 @@ declare const GameGlobal: typeof window & {
   stage: PIXI.Container
   customAd: wx.CustomAd
   bannerAd: wx.BannerAd
+  videoAd: wx.RewardedVideoAd
   interAd: wx.InterstitialAd
   interaction: Promise<wx.IRect>
+  zoom: number
   design: {
     width: number
     height: number
@@ -38,6 +40,18 @@ interface IScene {
 }
 
 declare module wx {
+  interface RewardedVideoAd {
+    load(): Promise<unknown>
+    show(): Promise<unknown>
+    onClose(opt: (opt: {isEnded: boolean}) => void): void
+    onError(opt: ({errMsg: string, errCode: number}) => void): void
+  }
+
+  function createRewardedVideoAd(opt: {
+    adUnitId: string
+    multiton?: boolean
+  }): RewardedVideoAd
+
   interface IRect {
     width: number
     height: number
@@ -105,15 +119,15 @@ declare module wx {
     /** 提示的内容 */
     content: string
     /** 是否显示取消按钮 */
-    showCancel: boolean
+    showCancel?: boolean
     /** 取消按钮的文字，最多 4 个字符 */
-    cancelText: string
+    cancelText?: string
     /** 取消按钮的文字颜色，必须是 16 进制格式的颜色字符串 */
-    cancelColor: string
+    cancelColor?: string
     /** 确认按钮的文字，最多 4 个字符 */
-    confirmText: string
+    confirmText?: string
     /** 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串 */
-    confirmColor: string
+    confirmColor?: string
 
     fail?: () => void
     success?: () => void

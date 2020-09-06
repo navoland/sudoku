@@ -1,4 +1,6 @@
+import {store} from '~/util'
 import Cell from './Cell'
+import {Color} from './enum'
 
 const size = 80
 const grid: Grid = new PIXI.Graphics()
@@ -6,17 +8,17 @@ const grid: Grid = new PIXI.Graphics()
   .lineStyle(4, 0x555555, 1, 1)
   .drawRect(0, 0, size * 9, size * 9)
 grid.interactive = true
-grid.pivot.set(grid.width / 2, 0)
+grid.pivot.set(size * 4.5, 0)
 grid.on('pointerdown', (e: IEvent) => {
   if (e.target.name !== 'cell') return
   const cell = e.target as Cell
-  const {index} = cell
+  const {coord} = cell
   inactivate()
-  if (!cell.fixed) {
-    cell.select()
-    grid.activeCell = cell
-  }
-  activeCells(index.x, index.y)
+  highlight(coord.x, coord.y)
+  alike(cell.num)
+  if (cell.fixed) return grid.cell = null
+  cell.select()
+  grid.cell = cell
 })
 
 let cells: Cell[]
@@ -25,7 +27,7 @@ let cols: Cell[][]
 let boxes: Cell[][]
 
 /** 高亮关联的cell */
-function activeCells(x: number, y: number) {
+function highlight(x: number, y: number) {
   for (const cell of rows[y]) {
     cell.activate()
   }
@@ -44,7 +46,25 @@ function inactivate() {
   }
 }
 
-grid.layout = function(data: ILevelData) {
+grid.check = function() {
+  const {data} = this
+  const answer = data[1]
+  for (let i = 0, j = cells.length; i < j; i++) {
+    const cell = cells[i]
+    if (`${cell.num}` !== answer[i]) return false
+  }
+  return true
+}
+
+/** 高亮相同数字的cell */
+function alike(v: number) {
+  if (!v) return
+  for (const item of cells) {
+    if (item.num === v) item.activate(Color.Same, true)
+  }
+}
+
+grid.layout = function(data: ILevelData, restore?: boolean) {
   cells = []
   rows = []
   cols = []
@@ -65,8 +85,8 @@ grid.layout = function(data: ILevelData) {
     })
 
     cell.name = 'cell'
-    cell.index.x = x
-    cell.index.y = y
+    cell.coord.x = x
+    cell.coord.y = y
 
     rows[y] ||= []
     rows[y].push(cell)
@@ -83,11 +103,17 @@ grid.layout = function(data: ILevelData) {
     }
 
     cell.interactive = true
-
     cell.position.set(x * size, y * size)
-
     cells.push(cell)
     grid.addChild(cell)
+
+    if (!restore || !store.record.cells) continue
+
+    // 继续上次
+    const old = store.record.cells[i]
+    if (old.fixed) continue
+    if (old.num) cell.num = old.num
+    else for (const x of old.items) x && cell.toggle(x)
   }
 
   for (let x = 0; x < 2; x++) {
@@ -111,10 +137,33 @@ grid.layout = function(data: ILevelData) {
   }
 }
 
+grid.update = function(data: ILevelData) {
+  for (let i = 0, j = cells.length; i < j; i++) {
+    const cell = cells[i]
+    const num = +data[0][i]
+    cell.erase()
+    num ? cell.fix(num) : cell.unfix()
+  }
+}
+
+grid.save = function() {
+  store.record.cells = cells.map(cell => {
+    return {
+      num: cell.num,
+      fixed: cell.fixed,
+      items: cell.items?.map(item => item.visible ? +item.text : 0)
+    }
+  })
+}
+
 interface Grid extends PIXI.Graphics {
+  cell?: Cell
   data?: ILevelData
-  activeCell?: Cell
-  layout?(this: Grid, data: ILevelData): void
+  save?(this: Grid): void
+  check?(this: Grid): boolean
+  alike?(this: Grid, v: number): void
+  update?(this: Grid, data: ILevelData): void
+  layout?(this: Grid, data: ILevelData, restore?: boolean): void
 }
 
 

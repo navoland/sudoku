@@ -1,14 +1,18 @@
 let store = {
   version: '1.0.0',
+
   newbie: true,
-  setting: {
-    voice: 1,
+
+  record: null as {
+    time?: number,
+    cells?: any[],
+    level?: number,
+    difficulty?: number,
   },
 
-  score: {
-    level: 0,
-    step: Number.MAX_SAFE_INTEGER
-  },
+  levels: [0, 0, 0, 0],
+
+  setting: {voice: 1},
 
   user: {
     name: null,

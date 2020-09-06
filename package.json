@@ -29,7 +29,7 @@
     "@typescript-eslint/parser": "^4.0.1",
     "babel-loader": "^8.1.0",
     "core-js": "^3.6.5",
-    "dragonbones.js": "^5.7.1",
+    "dayjs": "^1.8.35",
     "eslint": "^7.8.1",
     "eslint-loader": "^4.0.2",
     "howler": "^2.2.0",

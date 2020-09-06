@@ -6,6 +6,14 @@ const dirs = ['font', 'anime', 'sound', 'texture']
 const files = [
   {name: 'texture/ui.png', version: '1.0.0'},
   {name: 'texture/ui.json', version: '1.0.0'},
+  {name: 'sound/tap.ogg', version: '1.0.0'},
+  {name: 'sound/pen.ogg', version: '1.0.0'},
+  {name: 'sound/win.ogg', version: '1.0.0'},
+  {name: 'sound/hint.ogg', version: '1.0.0'},
+  {name: 'sound/back.ogg', version: '1.0.0'},
+  {name: 'sound/error.ogg', version: '1.0.0'},
+  {name: 'sound/erase.ogg', version: '1.0.0'},
+  {name: 'sound/pencil.ogg', version: '1.0.0'},
 ]
 
 const forceUpdate = false
