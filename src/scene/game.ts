@@ -32,15 +32,11 @@ function refresh() {
 }
 
 export function show(opt: {grade: number, index: number}) {
-  if (!opt) { // restore
-    console.log('restore')
-  } else { // new
-    store.last = {
-      grade: opt.grade,
-      index: opt.index,
-      duration: 0
-    }
-  }
+  opt && (store.last = {
+    grade: opt.grade,
+    index: opt.index,
+    duration: 0
+  })
   btnBack.show()
   if (!container) return init()
   container.visible = true

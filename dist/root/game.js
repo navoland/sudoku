@@ -60231,7 +60231,7 @@ function format(i) {
   if (h) queue.push(h, '时');
   if (m) queue.push(m, '分');
   if (i) queue.push(i, '秒');
-  return queue.join(' ');
+  return queue.length ? queue.join(' ') : '0 秒';
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
@@ -60754,7 +60754,7 @@ function format(i) {
   if (h) queue.push(h, '时');
   if (m) queue.push(m, '分');
   if (i) queue.push(i, '秒');
-  return queue.join(' ');
+  return queue.length ? queue.join(' ') : '0 秒';
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
@@ -60844,18 +60844,11 @@ function refresh() {
 }
 
 function show(opt) {
-  if (!opt) {
-    // restore
-    console.log('restore');
-  } else {
-    // new
-    _util__WEBPACK_IMPORTED_MODULE_6__["store"].last = {
-      grade: opt.grade,
-      index: opt.index,
-      duration: 0
-    };
-  }
-
+  opt && (_util__WEBPACK_IMPORTED_MODULE_6__["store"].last = {
+    grade: opt.grade,
+    index: opt.index,
+    duration: 0
+  });
   _module__WEBPACK_IMPORTED_MODULE_5__["btnBack"].show();
   if (!container) return init();
   container.visible = true;

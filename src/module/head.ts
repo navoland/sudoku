@@ -84,5 +84,5 @@ function format(i: number) {
   if (h) queue.push(h, '时')
   if (m) queue.push(m, '分')
   if (i) queue.push(i, '秒')
-  return queue.join(' ')
+  return queue.length ? queue.join(' ') : '0 秒'
 }
