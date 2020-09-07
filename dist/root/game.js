@@ -203,6 +203,17 @@ module.exports = __webpack_require__(/*! core-js-pure/stable/instance/fill */ ".
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js ***!
+  \*********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! core-js-pure/stable/instance/for-each */ "./node_modules/core-js-pure/stable/instance/for-each.js");
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js":
 /*!*********************************************************************************!*\
   !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js ***!
@@ -266,6 +277,17 @@ module.exports = __webpack_require__(/*! core-js-pure/stable/object/from-entries
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! core-js-pure/stable/object/keys */ "./node_modules/core-js-pure/stable/object/keys.js");
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! core-js-pure/stable/object/values */ "./node_modules/core-js-pure/stable/object/values.js");
 
 /***/ }),
 
@@ -37596,6 +37618,21 @@ module.exports = entryVirtual('Array').fill;
 
 /***/ }),
 
+/***/ "./node_modules/core-js-pure/es/array/virtual/for-each.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/core-js-pure/es/array/virtual/for-each.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../../modules/es.array.for-each */ "./node_modules/core-js-pure/modules/es.array.for-each.js");
+var entryVirtual = __webpack_require__(/*! ../../../internals/entry-virtual */ "./node_modules/core-js-pure/internals/entry-virtual.js");
+
+module.exports = entryVirtual('Array').forEach;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js-pure/es/array/virtual/includes.js":
 /*!****************************************************************!*\
   !*** ./node_modules/core-js-pure/es/array/virtual/includes.js ***!
@@ -37907,6 +37944,21 @@ __webpack_require__(/*! ../../modules/es.object.set-prototype-of */ "./node_modu
 var path = __webpack_require__(/*! ../../internals/path */ "./node_modules/core-js-pure/internals/path.js");
 
 module.exports = path.Object.setPrototypeOf;
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/es/object/values.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/core-js-pure/es/object/values.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es.object.values */ "./node_modules/core-js-pure/modules/es.object.values.js");
+var path = __webpack_require__(/*! ../../internals/path */ "./node_modules/core-js-pure/internals/path.js");
+
+module.exports = path.Object.values;
 
 
 /***/ }),
@@ -38374,6 +38426,31 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
   while (endPos > index) O[index++] = value;
   return O;
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/internals/array-for-each.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js-pure/internals/array-for-each.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $forEach = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js-pure/internals/array-iteration.js").forEach;
+var arrayMethodIsStrict = __webpack_require__(/*! ../internals/array-method-is-strict */ "./node_modules/core-js-pure/internals/array-method-is-strict.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js-pure/internals/array-method-uses-to-length.js");
+
+var STRICT_METHOD = arrayMethodIsStrict('forEach');
+var USES_TO_LENGTH = arrayMethodUsesToLength('forEach');
+
+// `Array.prototype.forEach` method implementation
+// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+module.exports = (!STRICT_METHOD || !USES_TO_LENGTH) ? function forEach(callbackfn /* , thisArg */) {
+  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+} : [].forEach;
 
 
 /***/ }),
@@ -40857,6 +40934,49 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 
 /***/ }),
 
+/***/ "./node_modules/core-js-pure/internals/object-to-array.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/core-js-pure/internals/object-to-array.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js-pure/internals/descriptors.js");
+var objectKeys = __webpack_require__(/*! ../internals/object-keys */ "./node_modules/core-js-pure/internals/object-keys.js");
+var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js-pure/internals/to-indexed-object.js");
+var propertyIsEnumerable = __webpack_require__(/*! ../internals/object-property-is-enumerable */ "./node_modules/core-js-pure/internals/object-property-is-enumerable.js").f;
+
+// `Object.{ entries, values }` methods implementation
+var createMethod = function (TO_ENTRIES) {
+  return function (it) {
+    var O = toIndexedObject(it);
+    var keys = objectKeys(O);
+    var length = keys.length;
+    var i = 0;
+    var result = [];
+    var key;
+    while (length > i) {
+      key = keys[i++];
+      if (!DESCRIPTORS || propertyIsEnumerable.call(O, key)) {
+        result.push(TO_ENTRIES ? [key, O[key]] : O[key]);
+      }
+    }
+    return result;
+  };
+};
+
+module.exports = {
+  // `Object.entries` method
+  // https://tc39.github.io/ecma262/#sec-object.entries
+  entries: createMethod(true),
+  // `Object.values` method
+  // https://tc39.github.io/ecma262/#sec-object.values
+  values: createMethod(false)
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js-pure/internals/object-to-string.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/core-js-pure/internals/object-to-string.js ***!
@@ -41619,6 +41739,27 @@ addToUnscopables('fill');
 
 /***/ }),
 
+/***/ "./node_modules/core-js-pure/modules/es.array.for-each.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/core-js-pure/modules/es.array.for-each.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
+var forEach = __webpack_require__(/*! ../internals/array-for-each */ "./node_modules/core-js-pure/internals/array-for-each.js");
+
+// `Array.prototype.forEach` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+$({ target: 'Array', proto: true, forced: [].forEach != forEach }, {
+  forEach: forEach
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js-pure/modules/es.array.from.js":
 /*!************************************************************!*\
   !*** ./node_modules/core-js-pure/modules/es.array.from.js ***!
@@ -42103,6 +42244,27 @@ $({ target: 'Object', stat: true }, {
 /***/ (function(module, exports) {
 
 // empty
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/modules/es.object.values.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js-pure/modules/es.object.values.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
+var $values = __webpack_require__(/*! ../internals/object-to-array */ "./node_modules/core-js-pure/internals/object-to-array.js").values;
+
+// `Object.values` method
+// https://tc39.github.io/ecma262/#sec-object.values
+$({ target: 'Object', stat: true }, {
+  values: function values(O) {
+    return $values(O);
+  }
+});
 
 
 /***/ }),
@@ -43623,6 +43785,20 @@ module.exports = parent;
 
 /***/ }),
 
+/***/ "./node_modules/core-js-pure/stable/array/virtual/for-each.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/core-js-pure/stable/array/virtual/for-each.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var parent = __webpack_require__(/*! ../../../es/array/virtual/for-each */ "./node_modules/core-js-pure/es/array/virtual/for-each.js");
+
+module.exports = parent;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js-pure/stable/instance/concat.js":
 /*!*************************************************************!*\
   !*** ./node_modules/core-js-pure/stable/instance/concat.js ***!
@@ -43647,6 +43823,33 @@ module.exports = parent;
 var parent = __webpack_require__(/*! ../../es/instance/fill */ "./node_modules/core-js-pure/es/instance/fill.js");
 
 module.exports = parent;
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/stable/instance/for-each.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js-pure/stable/instance/for-each.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/web.dom-collections.iterator */ "./node_modules/core-js-pure/modules/web.dom-collections.iterator.js");
+var forEach = __webpack_require__(/*! ../array/virtual/for-each */ "./node_modules/core-js-pure/stable/array/virtual/for-each.js");
+var classof = __webpack_require__(/*! ../../internals/classof */ "./node_modules/core-js-pure/internals/classof.js");
+var ArrayPrototype = Array.prototype;
+
+var DOMIterables = {
+  DOMTokenList: true,
+  NodeList: true
+};
+
+module.exports = function (it) {
+  var own = it.forEach;
+  return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.forEach)
+    // eslint-disable-next-line no-prototype-builtins
+    || DOMIterables.hasOwnProperty(classof(it)) ? forEach : own;
+};
 
 
 /***/ }),
@@ -43729,6 +43932,20 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 var parent = __webpack_require__(/*! ../../es/object/keys */ "./node_modules/core-js-pure/es/object/keys.js");
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/stable/object/values.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/core-js-pure/stable/object/values.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var parent = __webpack_require__(/*! ../../es/object/values */ "./node_modules/core-js-pure/es/object/values.js");
 
 module.exports = parent;
 
@@ -59067,35 +59284,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var min = Math.min;
-GameGlobal.design = {
-  width: 750,
-  height: 1334
-};
-GameGlobal.zoom = min(_core__WEBPACK_IMPORTED_MODULE_2__["screen"].width / 750, _core__WEBPACK_IMPORTED_MODULE_2__["screen"].height / 1334);
 Object(_scene__WEBPACK_IMPORTED_MODULE_3__["preload"])().then(function () {
   _core__WEBPACK_IMPORTED_MODULE_2__["monitor"].emit('scene:go', 'entry');
-}).catch(console.log); // 广告
-
-{
-  var interAd = wx.createInterstitialAd({
-    adUnitId: 'adunit-e0ecc6cf322cb27a'
-  });
-  interAd.onError(console.log);
-  GameGlobal.interAd = interAd;
-  _core__WEBPACK_IMPORTED_MODULE_2__["monitor"].on('wx:show', function () {
-    if (_util__WEBPACK_IMPORTED_MODULE_4__["store"].newbie) {
-      _util__WEBPACK_IMPORTED_MODULE_4__["store"].newbie = false;
-      return;
-    }
-
-    GameGlobal.interAd.show().catch(console.log);
-  });
-  var videoAd = wx.createRewardedVideoAd({
-    adUnitId: 'adunit-e0ecc6cf322cb27a'
-  });
-  videoAd.onError(console.log);
-  GameGlobal.videoAd = videoAd;
-} // 路由
+}); // 路由
 
 {
   var stack = [];
@@ -59133,7 +59324,7 @@ Object(_scene__WEBPACK_IMPORTED_MODULE_3__["preload"])().then(function () {
       promise = _createPromise2[0],
       resolve = _createPromise2[1];
 
-  GameGlobal.interaction = promise;
+  window.interaction = promise;
 
   var handle = function handle() {
     wx.offTouchStart(handle);
@@ -59141,7 +59332,13 @@ Object(_scene__WEBPACK_IMPORTED_MODULE_3__["preload"])().then(function () {
   };
 
   wx.onTouchStart(handle);
-}
+} // 设计尺寸
+
+window.design = {
+  width: 750,
+  height: 1334
+};
+window.zoom = min(_core__WEBPACK_IMPORTED_MODULE_2__["screen"].width / window.design.width, _core__WEBPACK_IMPORTED_MODULE_2__["screen"].height / window.design.height);
 
 /***/ }),
 
@@ -59588,7 +59785,7 @@ function init() {
       sy: .5
     });
   });
-  GameGlobal.interaction.then(function (rect) {
+  window.interaction.then(function (rect) {
     btn.visible = true;
     btn.position.set(_core__WEBPACK_IMPORTED_MODULE_1__["screen"].width - rect.right * 2 + btn.width / 2, rect.bottom + rect.top);
   });
@@ -59615,7 +59812,7 @@ function hide() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(PIXI) {var chart = new PIXI.Graphics().beginFill(0, .5).drawRect(0, 0, 600, 640).endFill();
+/* WEBPACK VAR INJECTION */(function(PIXI) {var chart = new PIXI.Graphics().beginFill(0xffcc33, .5).drawRect(0, 0, 600, 640).endFill();
 /* harmony default export */ __webpack_exports__["default"] = (chart);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
@@ -59625,14 +59822,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!****************************!*\
   !*** ./src/module/enum.ts ***!
   \****************************/
-/*! exports provided: Mode, Color, Difficulty */
+/*! exports provided: Mode, Color, Grade */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Mode", function() { return Mode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Color", function() { return Color; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Difficulty", function() { return Difficulty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Grade", function() { return Grade; });
 var Mode;
 
 (function (Mode) {
@@ -59646,20 +59843,21 @@ var Color;
   Color[Color["Gray"] = 5592405] = "Gray";
   Color[Color["Blue"] = 2250416] = "Blue";
   Color[Color["Black"] = 526344] = "Black";
+  Color[Color["White"] = 16777215] = "White";
   Color[Color["Connect"] = 15794175] = "Connect";
   Color[Color["Select"] = 12644592] = "Select";
   Color[Color["Same"] = 16777163] = "Same";
   Color[Color["Button"] = 4755423] = "Button";
 })(Color || (Color = {}));
 
-var Difficulty;
+var Grade;
 
-(function (Difficulty) {
-  Difficulty[Difficulty["Easy"] = 0] = "Easy";
-  Difficulty[Difficulty["Medium"] = 1] = "Medium";
-  Difficulty[Difficulty["Hard"] = 2] = "Hard";
-  Difficulty[Difficulty["Expert"] = 3] = "Expert";
-})(Difficulty || (Difficulty = {}));
+(function (Grade) {
+  Grade["Easy"] = "\u5BB9\u6613";
+  Grade["Medium"] = "\u666E\u901A";
+  Grade["Hard"] = "\u56F0\u96BE";
+  Grade["Expert"] = "\u4E13\u5BB6";
+})(Grade || (Grade = {}));
 
 /***/ }),
 
@@ -59940,11 +60138,110 @@ grid.save = function () {
 
 /***/ }),
 
+/***/ "./src/module/head.ts":
+/*!****************************!*\
+  !*** ./src/module/head.ts ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.join */ "./node_modules/core-js/modules/es.array.join.js");
+/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/for-each */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/object/values */ "./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
+
+
+
+
+
+
+var grades = _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_2___default()(_enum__WEBPACK_IMPORTED_MODULE_4__["Grade"]);
+
+var head = new PIXI.Graphics();
+
+head.init = function (opt) {
+  var width = opt.width,
+      height = opt.height;
+  head.clear().beginFill(0xffcc33).drawRect(0, 0, width, height).endFill();
+  var grade = new PIXI.Text("\u96BE\u5EA6: ".concat(grades[opt.grade]), {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_4__["Color"].Gray,
+    fontSize: 26
+  });
+  grade.anchor.set(0, .5);
+  grade.position.set(0, height / 2);
+  var progress = new PIXI.Text("\u8FDB\u5EA6: ".concat(opt.index), {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_4__["Color"].Gray,
+    fontSize: 26
+  });
+  progress.anchor.set(.5, .5);
+  progress.position.set(width / 2, height / 2);
+  var duration = new PIXI.Text("\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_3__["store"].last.duration)));
+  duration.anchor.set(1, .5);
+  duration.position.set(width, height / 2);
+  void function loop() {
+    duration.text = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_3__["store"].last.duration));
+    head.worldVisible && _util__WEBPACK_IMPORTED_MODULE_3__["store"].last.duration++;
+    if (!duration.transform) return;
+    Object(_util__WEBPACK_IMPORTED_MODULE_3__["delay"])(1).then(loop);
+  }();
+  this.addChild(grade, progress, duration);
+};
+
+head.refresh = function (opt) {
+  var _context;
+
+  _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_1___default()(_context = head.children).call(_context, function (child, i) {
+    switch (i) {
+      case 0:
+        {
+          child.text = "\u96BE\u5EA6: ".concat(grades[opt.grade]);
+          break;
+        }
+
+      case 1:
+        {
+          child.text = "\u8FDB\u5EA6: ".concat(opt.index);
+          break;
+        }
+
+      case 2:
+        {
+          child.text = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_3__["store"].last.duration));
+          break;
+        }
+    }
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (head);
+
+function format(i) {
+  var h = 0,
+      m = 0;
+  var queue = [];
+  if (i > 59) m = i / 60 | 0;
+  if (m > 59) h = m / 60 | 0;
+  i -= h * 3600 + m * 60;
+  if (h) queue.push(h, '时');
+  if (m) queue.push(m, '分');
+  if (i) queue.push(i, '秒');
+  return queue.join(' ');
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
+
+/***/ }),
+
 /***/ "./src/module/index.ts":
 /*!*****************************!*\
   !*** ./src/module/index.ts ***!
   \*****************************/
-/*! exports provided: Mode, Color, Difficulty, sound, btnBack, grid, chart */
+/*! exports provided: Mode, Color, Grade, sound, btnBack, grid, head, chart */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -59954,7 +60251,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Color", function() { return _enum__WEBPACK_IMPORTED_MODULE_0__["Color"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Difficulty", function() { return _enum__WEBPACK_IMPORTED_MODULE_0__["Difficulty"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grade", function() { return _enum__WEBPACK_IMPORTED_MODULE_0__["Grade"]; });
 
 /* harmony import */ var _sound__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sound */ "./src/module/sound.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "sound", function() { return _sound__WEBPACK_IMPORTED_MODULE_1__; });
@@ -59963,8 +60260,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _grid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./grid */ "./src/module/grid.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "grid", function() { return _grid__WEBPACK_IMPORTED_MODULE_3__["default"]; });
 
-/* harmony import */ var _chart__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chart */ "./src/module/chart.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "chart", function() { return _chart__WEBPACK_IMPORTED_MODULE_4__["default"]; });
+/* harmony import */ var _head__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./head */ "./src/module/head.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "head", function() { return _head__WEBPACK_IMPORTED_MODULE_4__["default"]; });
+
+/* harmony import */ var _chart__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./chart */ "./src/module/chart.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "chart", function() { return _chart__WEBPACK_IMPORTED_MODULE_5__["default"]; });
+
 
 
 
@@ -60290,143 +60591,154 @@ function getUserInfo() {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "show", function() { return show; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hide", function() { return hide; });
-/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.join */ "./node_modules/core-js/modules/es.array.join.js");
-/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/toConsumableArray */ "./node_modules/@babel/runtime-corejs3/helpers/esm/toConsumableArray.js");
+/* harmony import */ var core_js_modules_es_array_fill__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.fill */ "./node_modules/core-js/modules/es.array.fill.js");
+/* harmony import */ var core_js_modules_es_array_fill__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_fill__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.join */ "./node_modules/core-js/modules/es.array.join.js");
+/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
-/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/for-each */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/object/values */ "./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
 
 
 
 
 
 
-var container;
+
+
+var width = 600;
+var height = _module__WEBPACK_IMPORTED_MODULE_6__["chart"].height + 260;
+
+var grades = _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4___default()(_module__WEBPACK_IMPORTED_MODULE_6__["Grade"]);
+
 var layout;
+var container;
 var btns;
 
 function init() {
-  var _layout, _context3;
-
   container = new PIXI.Container();
-  container.interactive = true;
-  container.on('pointerdown', function (e) {
+  layout = new PIXI.Graphics().beginFill(0, 0).drawRect(0, 0, width, height).endFill();
+  layout.interactive = true;
+  layout.on('pointerdown', function (e) {
     var _e$target;
 
-    if (!((_e$target = e.target) === null || _e$target === void 0 ? void 0 : _e$target.name)) return;
-
-    switch (e.target.name) {
+    switch ((_e$target = e.target) === null || _e$target === void 0 ? void 0 : _e$target.name) {
       case 'btn:new':
         {
           wx.showActionSheet({
-            itemList: ['容易', '普通', '困难', '专家'],
+            itemList: grades,
             success: function success(_ref) {
+              var _store$last;
+
               var tapIndex = _ref.tapIndex;
-              _module__WEBPACK_IMPORTED_MODULE_4__["sound"].play('tap.ogg');
-              _core__WEBPACK_IMPORTED_MODULE_3__["monitor"].emit('scene:go', 'game', {
-                difficulty: tapIndex,
-                level: _util__WEBPACK_IMPORTED_MODULE_5__["store"].levels[tapIndex] || 0
+              _core__WEBPACK_IMPORTED_MODULE_5__["monitor"].emit('scene:go', 'game', {
+                grade: tapIndex,
+                index: ((_store$last = _util__WEBPACK_IMPORTED_MODULE_7__["store"].last) === null || _store$last === void 0 ? void 0 : _store$last.index) || 0
               });
             }
           });
           break;
         }
 
-      case 'btn:continue':
+      case 'btn:restore':
         {
-          _module__WEBPACK_IMPORTED_MODULE_4__["sound"].play('tap.ogg');
-          _core__WEBPACK_IMPORTED_MODULE_3__["monitor"].emit('scene:go', 'game', {
-            restore: true
-          });
+          _core__WEBPACK_IMPORTED_MODULE_5__["monitor"].emit('scene:go', 'game');
           break;
         }
     }
   });
-  layout = new PIXI.Graphics().beginFill(0, 0).drawRect(0, 0, 600, 940).endFill();
-  layout.pivot.set(layout.width / 2, layout.height / 2);
-  layout.position.set(_core__WEBPACK_IMPORTED_MODULE_3__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_3__["screen"].height / 2);
-  _module__WEBPACK_IMPORTED_MODULE_4__["chart"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_4__["chart"].width / 2, 0);
-  _module__WEBPACK_IMPORTED_MODULE_4__["chart"].position.set(layout.width / 2, 0);
   btns = [new PIXI.NineSlicePlane(PIXI.Texture.from('button.png'), 40, 40, 40, 40), new PIXI.NineSlicePlane(PIXI.Texture.from('button.png'), 40, 40, 40, 40)];
 
-  for (var i = 0, j = btns.length; i < j; i++) {
-    var btn = btns[i];
-    !i && (btn.tint = _module__WEBPACK_IMPORTED_MODULE_4__["Color"].Button);
-    btn.width = 500;
+  _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(btns).call(btns, function (btn, i) {
+    btn.width = 400;
     btn.height = 110;
     btn.interactive = true;
-    btn.pivot.set(250, 0);
-    btn.position.set(layout.width / 2, _module__WEBPACK_IMPORTED_MODULE_4__["chart"].y + _module__WEBPACK_IMPORTED_MODULE_4__["chart"].height + 40 + 140 * i);
-    if (!_util__WEBPACK_IMPORTED_MODULE_5__["store"].record && i) btn.visible = false;
+    btn.pivot.set(btn.width / 2, 0);
+    btn.x = width / 2;
+    btn.y = _module__WEBPACK_IMPORTED_MODULE_6__["chart"].height + 40 + i * 130;
+    btn.addChild(new PIXI.Text(''), new PIXI.Text(''));
+    layout.addChild(btn);
+  });
 
-    if (j > 1) {
-      if (i) {
-        var text = new PIXI.Text('新游戏', {
-          fill: _module__WEBPACK_IMPORTED_MODULE_4__["Color"].Button,
-          fontSize: 32
-        });
-        text.anchor.set(.5);
-        text.position.set(btn.width / 2, btn.height / 2 - 4);
-        btn.name = 'btn:new';
-        btn.addChild(text);
-      } else {
-        (function () {
-          var _context;
-
-          // 继续游戏
-          var text = new PIXI.Text('继续游戏', {
-            fill: 0xffffff,
-            fontSize: 28
-          });
-          text.anchor.set(.5, 0);
-          text.position.set(btn.width / 2, 18);
-          btn.name = 'btn:continue';
-          btn.addChild(text);
-          var info = new PIXI.Text(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_5__["store"].record.time || 0), " - ")).call(_context, ['容易', '普通', '困难', '专家'][_util__WEBPACK_IMPORTED_MODULE_5__["store"].record.difficulty]), {
-            fill: 0xffffff,
-            fontSize: 24
-          });
-          info.alpha = .8;
-          info.anchor.set(.5, 1);
-          info.position.set(btn.width / 2, btn.height - 28);
-          btn.addChild(info);
-          container.on('show', function () {
-            var _context2;
-
-            info.text = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context2 = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_5__["store"].record.time || 0), " - ")).call(_context2, ['容易', '普通', '困难', '专家'][_util__WEBPACK_IMPORTED_MODULE_5__["store"].record.difficulty]);
-          });
-        })();
-      }
-    } else {
-      var _text = new PIXI.Text('新游戏', {
-        fill: 0xffffff,
-        fontSize: 32
-      });
-
-      btn.name = 'btn:new';
-
-      _text.anchor.set(.5);
-
-      _text.position.set(btn.width / 2, btn.height / 2 - 4);
-
-      btn.addChild(_text);
-    }
-  }
-
-  (_layout = layout).addChild.apply(_layout, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = [_module__WEBPACK_IMPORTED_MODULE_4__["chart"]]).call(_context3, Object(_babel_runtime_corejs3_helpers_esm_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__["default"])(btns)));
-
-  layout.scale.set(GameGlobal.zoom);
+  _module__WEBPACK_IMPORTED_MODULE_6__["chart"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_6__["chart"].width / 2, 0);
+  _module__WEBPACK_IMPORTED_MODULE_6__["chart"].position.set(width / 2, 0);
+  layout.addChild(_module__WEBPACK_IMPORTED_MODULE_6__["chart"]);
+  layout.pivot.set(width / 2, height / 2);
+  layout.position.set(_core__WEBPACK_IMPORTED_MODULE_5__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_5__["screen"].height / 2);
   container.addChild(layout);
-  _core__WEBPACK_IMPORTED_MODULE_3__["stage"].addChild(container);
+  _core__WEBPACK_IMPORTED_MODULE_5__["stage"].addChild(container);
+  refresh();
+}
+
+function refresh() {
+  var _context4;
+
+  if (_util__WEBPACK_IMPORTED_MODULE_7__["store"].last) {
+    _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(btns).call(btns, function (btn, i) {
+      btn.visible = true;
+
+      if (i) {
+        var _context;
+
+        btn.tint = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].White;
+        btn.name = 'btn:new';
+
+        _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context = btn.children).call(_context, function (item, i) {
+          if (i) return item.visible = false;
+          item.text = '新游戏';
+          item.style.fontSize = 30;
+          item.style.fill = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].Button;
+          item.anchor.set(.5);
+          item.position.set(200, 50);
+        });
+      } else {
+        var _context2;
+
+        btn.tint = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].Button;
+        btn.name = 'btn:restore';
+
+        _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context2 = btn.children).call(_context2, function (item, i) {
+          var _context3;
+
+          item.visible = true;
+          item.alpha = i ? .8 : 1;
+          item.text = i ? _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.duration), " - ")).call(_context3, grades[_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade]) : '继续游戏';
+          item.style.fill = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].White;
+          item.style.fontSize = i ? 24 : 28;
+          item.anchor.set(.5, i ? 1 : 0);
+          item.position.set(200, i ? 82 : 18);
+        });
+      }
+    });
+
+    return;
+  } // 只有一个
+
+
+  btns[1].visible = false;
+  btns[0].tint = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].Button;
+  btns[0].name = 'btn:new';
+
+  _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context4 = btns[0].children).call(_context4, function (item, i) {
+    if (i) return item.visible = false;
+    item.text = '新游戏';
+    item.style.fontSize = 30;
+    item.style.fill = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].White;
+    item.anchor.set(.5);
+    item.position.set(200, 50);
+  });
 }
 
 function show() {
   if (!container) return init();
   container.visible = true;
-  container.emit('show');
+  refresh();
 }
 function hide() {
   container.visible = false;
@@ -60459,20 +60771,17 @@ function format(i) {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "show", function() { return show; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hide", function() { return hide; });
-/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.join */ "./node_modules/core-js/modules/es.array.join.js");
-/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/regenerator */ "./node_modules/@babel/runtime-corejs3/regenerator/index.js");
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
-/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/level */ "./level/index.ts");
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs3/regenerator */ "./node_modules/@babel/runtime-corejs3/regenerator/index.js");
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
-/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
-/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
-
+/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/level */ "./level/index.ts");
 
 
 
@@ -60483,190 +60792,38 @@ __webpack_require__.r(__webpack_exports__);
 
 var min = Math.min;
 var container;
-var numpad;
-var toolbar;
-var mode = _module__WEBPACK_IMPORTED_MODULE_8__["Mode"].Pen;
-var head;
 
-function init(_x) {
+function init() {
   return _init.apply(this, arguments);
 }
 
 function _init() {
-  _init = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee(opt) {
-    var rect, _context2, difficulty, progress, time, elapsed, hitArea, i, num, pencil, tip, eraser;
+  _init = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+    var _context2;
 
-    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context3) {
+    var rect;
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
-            return GameGlobal.interaction;
+            return window.interaction;
 
           case 2:
             rect = _context3.sent;
             container = new PIXI.Container();
-
-            if (opt.restore) {
-              opt.difficulty = _util__WEBPACK_IMPORTED_MODULE_6__["store"].record.difficulty;
-              opt.level = _util__WEBPACK_IMPORTED_MODULE_6__["store"].record.level;
-            }
-
-            head = new PIXI.Graphics().beginFill(0, 0).drawRect(0, 0, 720, 60).endFill();
-            head.pivot.set(head.width / 2, 0);
-            head.position.set(_core__WEBPACK_IMPORTED_MODULE_7__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_7__["pixelRatio"]);
-            difficulty = new PIXI.Text("\u96BE\u5EA6: ".concat(['容易', '普通', '困难', '专家'][opt.difficulty]), {
-              fill: _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray,
-              fontSize: 26
+            _module__WEBPACK_IMPORTED_MODULE_5__["head"].init({
+              width: 720,
+              height: 60,
+              grade: _util__WEBPACK_IMPORTED_MODULE_6__["store"].last.grade,
+              index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context2 = "".concat(_util__WEBPACK_IMPORTED_MODULE_6__["store"].last.index + 1, " / ")).call(_context2, _level__WEBPACK_IMPORTED_MODULE_7__["default"][_util__WEBPACK_IMPORTED_MODULE_6__["store"].last.grade].length)
             });
-            difficulty.anchor.set(0, .5);
-            difficulty.position.set(0, head.height / 2);
-            progress = new PIXI.Text(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default()(_context2 = "\u8FDB\u5EA6: ".concat(opt.level + 1, " / ")).call(_context2, _level__WEBPACK_IMPORTED_MODULE_5__["default"][opt.difficulty].length), {
-              fill: _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray,
-              fontSize: 26
-            });
-            progress.anchor.set(.5, .5);
-            progress.position.set(head.width / 2, head.height / 2);
-            time = opt.restore ? _util__WEBPACK_IMPORTED_MODULE_6__["store"].record.time || 0 : 0;
-            elapsed = new PIXI.Text("\u7528\u65F6: 0 \u79D2", {
-              fill: _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray,
-              fontSize: 26
-            });
-            elapsed.anchor.set(1, .5);
-            elapsed.position.set(head.width, head.height / 2);
-            void function loop() {
-              elapsed.text = "\u7528\u65F6: ".concat(format(time));
-              container.worldVisible && time++;
-              _util__WEBPACK_IMPORTED_MODULE_6__["store"].record.time = time;
-              if (!elapsed.transform) return;
-              Object(_util__WEBPACK_IMPORTED_MODULE_6__["delay"])(1).then(loop);
-            }();
-            head.addChild(difficulty, progress, elapsed);
-            head.scale.set(GameGlobal.zoom);
-            container.addChild(head);
-            _module__WEBPACK_IMPORTED_MODULE_8__["grid"].layout(_level__WEBPACK_IMPORTED_MODULE_5__["default"][opt.difficulty][opt.level], opt.restore);
-            _module__WEBPACK_IMPORTED_MODULE_8__["grid"].position.set(_core__WEBPACK_IMPORTED_MODULE_7__["screen"].width / 2, head.y + head.height + 20);
-            _module__WEBPACK_IMPORTED_MODULE_8__["grid"].scale.set(GameGlobal.zoom);
-            container.addChild(_module__WEBPACK_IMPORTED_MODULE_8__["grid"]);
-            numpad = new PIXI.Graphics().beginFill(0, 0).drawRect(0, 0, 720, 80).endFill();
-            hitArea = new PIXI.Rectangle(-40, -40, 80, 80);
+            _module__WEBPACK_IMPORTED_MODULE_5__["head"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_5__["head"].width / 2, 0);
+            _module__WEBPACK_IMPORTED_MODULE_5__["head"].position.set(_core__WEBPACK_IMPORTED_MODULE_4__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_4__["pixelRatio"]);
+            container.addChild(_module__WEBPACK_IMPORTED_MODULE_5__["head"]);
+            _core__WEBPACK_IMPORTED_MODULE_4__["stage"].addChild(container);
 
-            for (i = 1; i < 10; i++) {
-              num = new PIXI.Text("".concat(i), {
-                fill: _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Blue,
-                fontSize: 48
-              });
-              num.name = "".concat(i);
-              num.interactive = true;
-              num.anchor.set(.5);
-              num.hitArea = hitArea;
-              num.position.set(40 + 80 * (i - 1), 40);
-              numpad.addChild(num);
-            }
-
-            numpad.interactive = true;
-            numpad.on('pointerdown', function (e) {
-              e.stopped = true;
-              if (e.target === numpad || !_module__WEBPACK_IMPORTED_MODULE_8__["grid"].cell) return;
-
-              if (mode === _module__WEBPACK_IMPORTED_MODULE_8__["Mode"].Pen) {
-                _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('pen.ogg');
-                _module__WEBPACK_IMPORTED_MODULE_8__["grid"].cell.num = +e.target.name;
-                _module__WEBPACK_IMPORTED_MODULE_8__["grid"].check() && next();
-                _module__WEBPACK_IMPORTED_MODULE_8__["grid"].save();
-                return;
-              }
-
-              _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('pencil.ogg');
-              _module__WEBPACK_IMPORTED_MODULE_8__["grid"].cell.toggle(+e.target.name);
-              _module__WEBPACK_IMPORTED_MODULE_8__["grid"].save();
-            });
-            numpad.pivot.set(numpad.width / 2, numpad.height / 2);
-            numpad.position.set(_core__WEBPACK_IMPORTED_MODULE_7__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_8__["grid"].y + _module__WEBPACK_IMPORTED_MODULE_8__["grid"].height + 100);
-            numpad.scale.set(GameGlobal.zoom);
-            toolbar = new PIXI.Graphics().beginFill(0, 0).drawRect(0, 0, 680, 64).endFill();
-            toolbar.interactive = true;
-            toolbar.pivot.set(toolbar.width / 2, 0);
-            toolbar.position.set(_core__WEBPACK_IMPORTED_MODULE_7__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_7__["screen"].height - 100);
-            toolbar.on('pointerdown', function (e) {
-              e.stopped = true;
-              if (e.target === toolbar) return;
-              var target = e.target;
-
-              switch (e.target.name) {
-                case 'pencil':
-                  {
-                    if (mode === _module__WEBPACK_IMPORTED_MODULE_8__["Mode"].Pen) {
-                      _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('pencil.ogg');
-                      mode = _module__WEBPACK_IMPORTED_MODULE_8__["Mode"].Pencil;
-                      target.tint = _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Blue;
-                    } else {
-                      mode = _module__WEBPACK_IMPORTED_MODULE_8__["Mode"].Pen;
-                      _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('pen.ogg');
-                      target.tint = _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray;
-                    }
-
-                    break;
-                  }
-
-                case 'eraser':
-                  {
-                    if (_module__WEBPACK_IMPORTED_MODULE_8__["grid"].cell) {
-                      _module__WEBPACK_IMPORTED_MODULE_8__["grid"].cell.erase();
-                      _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('erase.ogg');
-                    }
-
-                    break;
-                  }
-
-                case 'tip':
-                  {
-                    _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('tap.ogg');
-                    wx.showModal({
-                      title: '获取提示',
-                      content: '观看完整视频广告，获取3次提示机会',
-                      success: function success() {
-                        GameGlobal.videoAd.show().catch(function () {
-                          return GameGlobal.videoAd.load();
-                        }).catch(function (err) {
-                          err.errCode === 1002 && wx.showToast({
-                            title: '暂无广告资源',
-                            icon: 'none'
-                          });
-                        });
-                      }
-                    });
-                    break;
-                  }
-              }
-            });
-            pencil = PIXI.Sprite.from('icon.pencil.png');
-            pencil.interactive = true;
-            pencil.name = 'pencil';
-            pencil.tint = _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray;
-            pencil.scale.set(.5);
-            pencil.position.set(toolbar.width / 2, toolbar.height / 2);
-            tip = PIXI.Sprite.from('icon.tip.png');
-            tip.name = 'tip';
-            tip.interactive = true;
-            tip.tint = _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray;
-            tip.scale.set(.5);
-            tip.anchor.set(1, .5);
-            tip.position.set(toolbar.width, toolbar.height / 2);
-            toolbar.addChild(pencil, tip);
-            eraser = PIXI.Sprite.from('icon.eraser.png');
-            eraser.interactive = true;
-            eraser.name = 'eraser';
-            eraser.tint = _module__WEBPACK_IMPORTED_MODULE_8__["Color"].Gray;
-            eraser.scale.set(.5);
-            eraser.anchor.set(0, .5);
-            eraser.position.set(0, toolbar.height / 2);
-            toolbar.addChild(pencil, tip, eraser);
-            toolbar.scale.set(GameGlobal.zoom);
-            container.addChild(numpad, toolbar);
-            _core__WEBPACK_IMPORTED_MODULE_7__["stage"].addChild(container);
-
-          case 64:
+          case 9:
           case "end":
             return _context3.stop();
         }
@@ -60676,48 +60833,37 @@ function _init() {
   return _init.apply(this, arguments);
 }
 
-function next() {
-  _module__WEBPACK_IMPORTED_MODULE_8__["sound"].play('win.ogg');
-  var record = _util__WEBPACK_IMPORTED_MODULE_6__["store"].record;
-  var current = _util__WEBPACK_IMPORTED_MODULE_6__["store"].levels[record.difficulty] || 0;
-  if (current + 1 === _level__WEBPACK_IMPORTED_MODULE_5__["default"][record.difficulty].length) wx.showToast({
-    title: '当前模式已通关',
-    icon: 'none'
-  });else _util__WEBPACK_IMPORTED_MODULE_6__["store"].levels[record.difficulty] = current + 1;
-  {
-    var _context;
+function refresh() {
+  var _context;
 
-    head.children[1].text = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default()(_context = "\u8FDB\u5EA6: ".concat(_util__WEBPACK_IMPORTED_MODULE_6__["store"].levels[record.difficulty] + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_5__["default"][record.difficulty].length);
-  }
-  _module__WEBPACK_IMPORTED_MODULE_8__["grid"].update(_level__WEBPACK_IMPORTED_MODULE_5__["default"][record.difficulty][_util__WEBPACK_IMPORTED_MODULE_6__["store"].levels[record.difficulty]]);
+  _module__WEBPACK_IMPORTED_MODULE_5__["head"].refresh({
+    grade: _util__WEBPACK_IMPORTED_MODULE_6__["store"].last.grade,
+    index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context = "".concat(_util__WEBPACK_IMPORTED_MODULE_6__["store"].last.index + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_7__["default"][_util__WEBPACK_IMPORTED_MODULE_6__["store"].last.grade].length)
+  });
+  container.visible = true;
 }
 
 function show(opt) {
-  _module__WEBPACK_IMPORTED_MODULE_8__["btnBack"].show();
-  !opt.restore && (_util__WEBPACK_IMPORTED_MODULE_6__["store"].record = {
-    level: opt.level,
-    difficulty: opt.difficulty
-  });
-  if (!container) return init(opt);
+  if (!opt) {
+    // restore
+    console.log('restore');
+  } else {
+    // new
+    _util__WEBPACK_IMPORTED_MODULE_6__["store"].last = {
+      grade: opt.grade,
+      index: opt.index,
+      duration: 0
+    };
+  }
+
+  _module__WEBPACK_IMPORTED_MODULE_5__["btnBack"].show();
+  if (!container) return init();
   container.visible = true;
-  !opt.restore && _module__WEBPACK_IMPORTED_MODULE_8__["grid"].update(_level__WEBPACK_IMPORTED_MODULE_5__["default"][opt.difficulty][opt.level]);
+  refresh();
 }
 function hide() {
-  _module__WEBPACK_IMPORTED_MODULE_8__["btnBack"].hide();
+  _module__WEBPACK_IMPORTED_MODULE_5__["btnBack"].hide();
   container.visible = false;
-}
-
-function format(i) {
-  var h = 0,
-      m = 0;
-  var queue = [];
-  if (i > 59) m = i / 60 | 0;
-  if (m > 59) h = m / 60 | 0;
-  i -= h * 3600 + m * 60;
-  if (h) queue.push(h, '时');
-  if (m) queue.push(m, '分');
-  if (i) queue.push(i, '秒');
-  return queue.join(' ');
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
@@ -61167,8 +61313,7 @@ __webpack_require__.r(__webpack_exports__);
 var store = {
   version: '1.0.0',
   newbie: true,
-  record: null,
-  levels: [0, 0, 0, 0],
+  last: null,
   setting: {
     voice: 1
   },

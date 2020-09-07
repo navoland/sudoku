@@ -3,28 +3,16 @@ declare const PROD: boolean
 declare const VERSION: string
 declare const CLOUD_ID: string
 
+interface Window {
+  zoom: number
+  design: {width: number, height: number}
+  interaction: Promise<wx.IRect>
+}
+
 /** for wechat */
 declare const canvas: HTMLCanvasElement
 
 declare type ILevelData = [string, string, number, number, boolean]
-
-declare const GameGlobal: typeof window & {
-  /** 加载的字体 */
-  font: string
-  size: number
-  level: number
-  stage: PIXI.Container
-  customAd: wx.CustomAd
-  bannerAd: wx.BannerAd
-  videoAd: wx.RewardedVideoAd
-  interAd: wx.InterstitialAd
-  interaction: Promise<wx.IRect>
-  zoom: number
-  design: {
-    width: number
-    height: number
-  }
-}
 
 interface IEvent {
   x: number

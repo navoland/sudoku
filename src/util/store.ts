@@ -3,14 +3,11 @@ let store = {
 
   newbie: true,
 
-  record: null as {
-    time?: number,
-    cells?: any[],
-    level?: number,
-    difficulty?: number,
+  last: null as {
+    grade: number
+    index: number
+    duration: number
   },
-
-  levels: [0, 0, 0, 0],
 
   setting: {voice: 1},
 

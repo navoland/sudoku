@@ -36,7 +36,7 @@ function init() {
     })
   })
 
-  GameGlobal.interaction.then(rect => {
+  window.interaction.then(rect => {
     btn.visible = true
     btn.position.set(
       screen.width - rect.right * 2 + btn.width / 2,
