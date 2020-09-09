@@ -59815,33 +59815,39 @@ var Grade;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/is-array */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/is-array.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator-method */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator-method.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/symbol */ "./node_modules/@babel/runtime-corejs3/core-js-stable/symbol.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/from */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/from.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/slice */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @babel/runtime-corejs3/regenerator */ "./node_modules/@babel/runtime-corejs3/regenerator/index.js");
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/slicedToArray */ "./node_modules/@babel/runtime-corejs3/helpers/esm/slicedToArray.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
-/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
-/* harmony import */ var _Cell__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Cell */ "./src/module/Cell.ts");
-/* harmony import */ var _sound__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./sound */ "./src/module/sound.ts");
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
-/* harmony import */ var popmotion__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! popmotion */ "./node_modules/popmotion/dist/popmotion.es.js");
+/* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/is-array */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/is-array.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator-method */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator-method.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/symbol */ "./node_modules/@babel/runtime-corejs3/core-js-stable/symbol.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/from */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/from.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/slice */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @babel/runtime-corejs3/regenerator */ "./node_modules/@babel/runtime-corejs3/regenerator/index.js");
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/slicedToArray */ "./node_modules/@babel/runtime-corejs3/helpers/esm/slicedToArray.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
+/* harmony import */ var _Cell__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Cell */ "./src/module/Cell.ts");
+/* harmony import */ var _sound__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./sound */ "./src/module/sound.ts");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+/* harmony import */ var popmotion__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! popmotion */ "./node_modules/popmotion/dist/popmotion.es.js");
 
 
 
@@ -59855,9 +59861,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5___default.a === "undefined" || _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4___default()(o) == null) { if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3___default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2___default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { var _context2; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7___default()(_context2 = Object.prototype.toString.call(o)).call(_context2, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6___default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_8___default.a === "undefined" || _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_7___default()(o) == null) { if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_6___default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_5___default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { var _context3; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_10___default()(_context3 = Object.prototype.toString.call(o)).call(_context3, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_9___default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -59866,7 +59875,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-var mode = _enum__WEBPACK_IMPORTED_MODULE_12__["Mode"].Pen;
+var mode = _enum__WEBPACK_IMPORTED_MODULE_15__["Mode"].Pen;
 var selected;
 var data;
 var cells = [];
@@ -59876,7 +59885,7 @@ var regions = [];
 var grid = new PIXI.Graphics();
 grid.interactive = true;
 grid.on('pointerdown', function (e) {
-  if (!(e.target instanceof _Cell__WEBPACK_IMPORTED_MODULE_13__["default"])) return;
+  if (!(e.target instanceof _Cell__WEBPACK_IMPORTED_MODULE_16__["default"])) return;
   var cell = e.target;
   var coord = cell.coord;
   unhighlight();
@@ -59889,12 +59898,12 @@ grid.on('pointerdown', function (e) {
 
 grid.init = function (opt) {
   var size = opt.size;
-  this.clear().lineStyle(4, _enum__WEBPACK_IMPORTED_MODULE_12__["Color"].Black, 1, 1).beginFill(_enum__WEBPACK_IMPORTED_MODULE_12__["Color"].White).drawRect(0, 0, size * 9, size * 9).endFill();
+  this.clear().lineStyle(4, _enum__WEBPACK_IMPORTED_MODULE_15__["Color"].Black, 1, 1).beginFill(_enum__WEBPACK_IMPORTED_MODULE_15__["Color"].White).drawRect(0, 0, size * 9, size * 9).endFill();
 
   for (var i = 0; i < 81; i++) {
     var x = i % 9;
     var y = i / 9 | 0;
-    var cell = new _Cell__WEBPACK_IMPORTED_MODULE_13__["default"]({
+    var cell = new _Cell__WEBPACK_IMPORTED_MODULE_16__["default"]({
       size: size,
       y: y,
       x: x
@@ -59921,13 +59930,13 @@ grid.init = function (opt) {
 
 
   for (var _x = 0; _x < 2; _x++) {
-    var line = new PIXI.Graphics().beginFill(_enum__WEBPACK_IMPORTED_MODULE_12__["Color"].Black).drawRect(0, 0, 2, size * 9).endFill();
+    var line = new PIXI.Graphics().beginFill(_enum__WEBPACK_IMPORTED_MODULE_15__["Color"].Black).drawRect(0, 0, 2, size * 9).endFill();
     line.position.set((_x + 1) * size * 3 - 1, 0);
     grid.addChild(line);
   }
 
   for (var _y = 0; _y < 2; _y++) {
-    var _line = new PIXI.Graphics().beginFill(_enum__WEBPACK_IMPORTED_MODULE_12__["Color"].Black).drawRect(0, 0, size * 9, 2).endFill();
+    var _line = new PIXI.Graphics().beginFill(_enum__WEBPACK_IMPORTED_MODULE_15__["Color"].Black).drawRect(0, 0, size * 9, 2).endFill();
 
     _line.position.set(0, (_y + 1) * size * 3 - 1);
 
@@ -59936,97 +59945,113 @@ grid.init = function (opt) {
 };
 
 grid.refresh = /*#__PURE__*/function () {
-  var _ref = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_11__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.mark(function _callee(opt) {
-    var _iterator, _step, row, _createPromise, _createPromise2, promise, resolve, _iterator2, _step2, _loop;
+  var _ref = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_14__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11___default.a.mark(function _callee(opt) {
+    var _iterator, _step, _loop;
 
-    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.wrap(function _callee$(_context) {
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11___default.a.wrap(function _callee$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
             data = opt.data;
             _iterator = _createForOfIteratorHelper(rows);
-            _context.prev = 2;
+            _context2.prev = 2;
+            _loop = /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11___default.a.mark(function _loop() {
+              var row, _createPromise, _createPromise2, promise, resolve, _iterator2, _step2, _loop2;
+
+              return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_11___default.a.wrap(function _loop$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      row = _step.value;
+                      _createPromise = Object(_util__WEBPACK_IMPORTED_MODULE_18__["createPromise"])(), _createPromise2 = Object(_babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_12__["default"])(_createPromise, 2), promise = _createPromise2[0], resolve = _createPromise2[1];
+                      _iterator2 = _createForOfIteratorHelper(row);
+
+                      try {
+                        _loop2 = function _loop2() {
+                          var cell = _step2.value;
+                          cell.erase();
+                          var anime = Object(popmotion__WEBPACK_IMPORTED_MODULE_19__["tween"])({
+                            from: {
+                              r: .2,
+                              g: .2,
+                              b: .2
+                            },
+                            to: {
+                              r: 1,
+                              g: 1,
+                              b: 1
+                            },
+                            duration: 2e2,
+                            ease: popmotion__WEBPACK_IMPORTED_MODULE_19__["easing"].easeOut
+                          }).start({
+                            update: function update(v) {
+                              anime.getProgress() > .5 && resolve();
+                              cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0;
+                            },
+                            complete: function complete() {
+                              var num = +data[0][cell.index];
+                              num && cell.preset(num);
+                            }
+                          });
+                        };
+
+                        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                          _loop2();
+                        }
+                      } catch (err) {
+                        _iterator2.e(err);
+                      } finally {
+                        _iterator2.f();
+                      }
+
+                      _context.next = 6;
+                      return promise;
+
+                    case 6:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _loop);
+            });
 
             _iterator.s();
 
-          case 4:
+          case 5:
             if ((_step = _iterator.n()).done) {
-              _context.next = 14;
+              _context2.next = 9;
               break;
             }
 
-            row = _step.value;
-            _createPromise = Object(_util__WEBPACK_IMPORTED_MODULE_15__["createPromise"])(), _createPromise2 = Object(_babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_9__["default"])(_createPromise, 2), promise = _createPromise2[0], resolve = _createPromise2[1];
-            Object(_util__WEBPACK_IMPORTED_MODULE_15__["delay"])(.1).then(resolve);
-            _iterator2 = _createForOfIteratorHelper(row);
+            return _context2.delegateYield(_loop(), "t0", 7);
 
-            try {
-              _loop = function _loop() {
-                var cell = _step2.value;
-                cell.erase();
-                Object(popmotion__WEBPACK_IMPORTED_MODULE_16__["tween"])({
-                  from: {
-                    r: .2,
-                    g: .2,
-                    b: .2
-                  },
-                  to: {
-                    r: 1,
-                    g: 1,
-                    b: 1
-                  },
-                  duration: 2e2,
-                  ease: popmotion__WEBPACK_IMPORTED_MODULE_16__["easing"].easeOut
-                }).start({
-                  update: function update(v) {
-                    cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0;
-                  },
-                  complete: function complete() {
-                    var num = +data[0][cell.index];
-                    num && cell.preset(num);
-                  }
-                });
-              };
-
-              for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-                _loop();
-              }
-            } catch (err) {
-              _iterator2.e(err);
-            } finally {
-              _iterator2.f();
-            }
-
-            _context.next = 12;
-            return promise;
-
-          case 12:
-            _context.next = 4;
+          case 7:
+            _context2.next = 5;
             break;
+
+          case 9:
+            _context2.next = 14;
+            break;
+
+          case 11:
+            _context2.prev = 11;
+            _context2.t1 = _context2["catch"](2);
+
+            _iterator.e(_context2.t1);
 
           case 14:
-            _context.next = 19;
-            break;
-
-          case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](2);
-
-            _iterator.e(_context.t0);
-
-          case 19:
-            _context.prev = 19;
+            _context2.prev = 14;
 
             _iterator.f();
 
-            return _context.finish(19);
+            return _context2.finish(14);
 
-          case 22:
+          case 17:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee, null, [[2, 16, 19, 22]]);
+    }, _callee, null, [[2, 11, 14, 17]]);
   }));
 
   return function (_x2) {
@@ -60035,26 +60060,26 @@ grid.refresh = /*#__PURE__*/function () {
 }();
 
 grid.switch = function () {
-  mode = mode === _enum__WEBPACK_IMPORTED_MODULE_12__["Mode"].Pen ? _enum__WEBPACK_IMPORTED_MODULE_12__["Mode"].Pencil : _enum__WEBPACK_IMPORTED_MODULE_12__["Mode"].Pen;
-  _sound__WEBPACK_IMPORTED_MODULE_14__["play"]("".concat(mode === _enum__WEBPACK_IMPORTED_MODULE_12__["Mode"].Pen ? 'pen' : 'pencil', ".mp3"));
+  mode = mode === _enum__WEBPACK_IMPORTED_MODULE_15__["Mode"].Pen ? _enum__WEBPACK_IMPORTED_MODULE_15__["Mode"].Pencil : _enum__WEBPACK_IMPORTED_MODULE_15__["Mode"].Pen;
+  _sound__WEBPACK_IMPORTED_MODULE_17__["play"]("".concat(mode === _enum__WEBPACK_IMPORTED_MODULE_15__["Mode"].Pen ? 'pen' : 'pencil', ".mp3"));
 };
 
 grid.erase = function () {
   if (!selected) return;
-  _sound__WEBPACK_IMPORTED_MODULE_14__["play"]('erase.mp3');
+  _sound__WEBPACK_IMPORTED_MODULE_17__["play"]('erase.mp3');
   selected.erase();
 };
 
 grid.input = function (v) {
   if (!selected) return;
 
-  if (mode === _enum__WEBPACK_IMPORTED_MODULE_12__["Mode"].Pen) {
+  if (mode === _enum__WEBPACK_IMPORTED_MODULE_15__["Mode"].Pen) {
     selected.value = v;
-    _sound__WEBPACK_IMPORTED_MODULE_14__["play"]('pen.mp3');
+    _sound__WEBPACK_IMPORTED_MODULE_17__["play"]('pen.mp3');
     if (check()) return grid.emit('done');
   } else {
     selected.note(v);
-    _sound__WEBPACK_IMPORTED_MODULE_14__["play"]('pencil.mp3');
+    _sound__WEBPACK_IMPORTED_MODULE_17__["play"]('pencil.mp3');
   }
 };
 
@@ -60063,9 +60088,9 @@ grid.tip = function () {
     title: '请先选中需要填写的方格',
     icon: 'none'
   });
-  _util__WEBPACK_IMPORTED_MODULE_15__["store"].tip.count--;
+  _util__WEBPACK_IMPORTED_MODULE_18__["store"].tip.count--;
   selected.value = +data[1][selected.index];
-  _sound__WEBPACK_IMPORTED_MODULE_14__["play"]('hint.mp3');
+  _sound__WEBPACK_IMPORTED_MODULE_17__["play"]('hint.mp3');
   if (check()) grid.emit('done');
 };
 /** 高亮相同数字的cell */
@@ -60080,7 +60105,7 @@ function alike(v) {
   try {
     for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
       var cell = _step3.value;
-      if (cell.value === v) cell.highlight(_enum__WEBPACK_IMPORTED_MODULE_12__["Color"].Same, true);
+      if (cell.value === v) cell.highlight(_enum__WEBPACK_IMPORTED_MODULE_15__["Color"].Same, true);
     }
   } catch (err) {
     _iterator3.e(err);

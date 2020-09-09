@@ -1,7 +1,7 @@
 import {Color, Mode} from './enum'
 import Cell from './Cell'
 import * as sound from './sound'
-import {createPromise, delay, store} from '~/util'
+import {createPromise, store} from '~/util'
 import {easing, tween} from 'popmotion'
 
 let mode = Mode.Pen
@@ -85,16 +85,16 @@ grid.refresh = async function(opt) {
   data = opt.data
   for (const row of rows) {
     const [promise, resolve] = createPromise()
-    delay(.1).then(resolve)
     for (const cell of row) {
       cell.erase()
-      tween({
+      const anime = tween({
         from: {r: .2, g: .2, b: .2},
         to: {r: 1, g: 1, b: 1},
         duration: 2e2,
         ease: easing.easeOut
       }).start({
         update: (v: any) => {
+          anime.getProgress() > .5 && resolve()
           cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0
         },
         complete: () => {
