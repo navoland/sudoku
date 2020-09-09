@@ -192,17 +192,6 @@ module.exports = __webpack_require__(/*! core-js-pure/stable/instance/concat */ 
 
 /***/ }),
 
-/***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/fill.js":
-/*!*****************************************************************************!*\
-  !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/fill.js ***!
-  \*****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(/*! core-js-pure/stable/instance/fill */ "./node_modules/core-js-pure/stable/instance/fill.js");
-
-/***/ }),
-
 /***/ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js":
 /*!*********************************************************************************!*\
   !*** ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js ***!
@@ -37603,21 +37592,6 @@ module.exports = entryVirtual('Array').concat;
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/es/array/virtual/fill.js":
-/*!************************************************************!*\
-  !*** ./node_modules/core-js-pure/es/array/virtual/fill.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(/*! ../../../modules/es.array.fill */ "./node_modules/core-js-pure/modules/es.array.fill.js");
-var entryVirtual = __webpack_require__(/*! ../../../internals/entry-virtual */ "./node_modules/core-js-pure/internals/entry-virtual.js");
-
-module.exports = entryVirtual('Array').fill;
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/es/array/virtual/for-each.js":
 /*!****************************************************************!*\
   !*** ./node_modules/core-js-pure/es/array/virtual/for-each.js ***!
@@ -37707,25 +37681,6 @@ var ArrayPrototype = Array.prototype;
 module.exports = function (it) {
   var own = it.concat;
   return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.concat) ? concat : own;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/es/instance/fill.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js-pure/es/instance/fill.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var fill = __webpack_require__(/*! ../array/virtual/fill */ "./node_modules/core-js-pure/es/array/virtual/fill.js");
-
-var ArrayPrototype = Array.prototype;
-
-module.exports = function (it) {
-  var own = it.fill;
-  return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.fill) ? fill : own;
 };
 
 
@@ -38396,35 +38351,6 @@ module.exports = function (it) {
   if (!isObject(it)) {
     throw TypeError(String(it) + ' is not an object');
   } return it;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/array-fill.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/array-fill.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var toObject = __webpack_require__(/*! ../internals/to-object */ "./node_modules/core-js-pure/internals/to-object.js");
-var toAbsoluteIndex = __webpack_require__(/*! ../internals/to-absolute-index */ "./node_modules/core-js-pure/internals/to-absolute-index.js");
-var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js-pure/internals/to-length.js");
-
-// `Array.prototype.fill` method implementation
-// https://tc39.github.io/ecma262/#sec-array.prototype.fill
-module.exports = function fill(value /* , start = 0, end = @length */) {
-  var O = toObject(this);
-  var length = toLength(O.length);
-  var argumentsLength = arguments.length;
-  var index = toAbsoluteIndex(argumentsLength > 1 ? arguments[1] : undefined, length);
-  var end = argumentsLength > 2 ? arguments[2] : undefined;
-  var endPos = end === undefined ? length : toAbsoluteIndex(end, length);
-  while (endPos > index) O[index++] = value;
-  return O;
 };
 
 
@@ -41716,29 +41642,6 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 /***/ }),
 
-/***/ "./node_modules/core-js-pure/modules/es.array.fill.js":
-/*!************************************************************!*\
-  !*** ./node_modules/core-js-pure/modules/es.array.fill.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
-var fill = __webpack_require__(/*! ../internals/array-fill */ "./node_modules/core-js-pure/internals/array-fill.js");
-var addToUnscopables = __webpack_require__(/*! ../internals/add-to-unscopables */ "./node_modules/core-js-pure/internals/add-to-unscopables.js");
-
-// `Array.prototype.fill` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.fill
-$({ target: 'Array', proto: true }, {
-  fill: fill
-});
-
-// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
-addToUnscopables('fill');
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js-pure/modules/es.array.for-each.js":
 /*!****************************************************************!*\
   !*** ./node_modules/core-js-pure/modules/es.array.for-each.js ***!
@@ -43807,20 +43710,6 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 var parent = __webpack_require__(/*! ../../es/instance/concat */ "./node_modules/core-js-pure/es/instance/concat.js");
-
-module.exports = parent;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/stable/instance/fill.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js-pure/stable/instance/fill.js ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var parent = __webpack_require__(/*! ../../es/instance/fill */ "./node_modules/core-js-pure/es/instance/fill.js");
 
 module.exports = parent;
 
@@ -59474,30 +59363,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/is-array */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/is-array.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator-method */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator-method.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/symbol */ "./node_modules/@babel/runtime-corejs3/core-js-stable/symbol.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/from */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/from.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/slice */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/reflect/construct */ "./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_fill__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/fill */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/fill.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_fill__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_fill__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/classCallCheck */ "./node_modules/@babel/runtime-corejs3/helpers/esm/classCallCheck.js");
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/createClass */ "./node_modules/@babel/runtime-corejs3/helpers/esm/createClass.js");
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/assertThisInitialized */ "./node_modules/@babel/runtime-corejs3/helpers/esm/assertThisInitialized.js");
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/inherits */ "./node_modules/@babel/runtime-corejs3/helpers/esm/inherits.js");
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs3/helpers/esm/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/getPrototypeOf */ "./node_modules/@babel/runtime-corejs3/helpers/esm/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs3/helpers/esm/defineProperty.js");
-/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/reflect/construct */ "./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/classCallCheck */ "./node_modules/@babel/runtime-corejs3/helpers/esm/classCallCheck.js");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/createClass */ "./node_modules/@babel/runtime-corejs3/helpers/esm/createClass.js");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/assertThisInitialized */ "./node_modules/@babel/runtime-corejs3/helpers/esm/assertThisInitialized.js");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/inherits */ "./node_modules/@babel/runtime-corejs3/helpers/esm/inherits.js");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs3/helpers/esm/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/getPrototypeOf */ "./node_modules/@babel/runtime-corejs3/helpers/esm/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/defineProperty */ "./node_modules/@babel/runtime-corejs3/helpers/esm/defineProperty.js");
+/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
 
 
 
@@ -59510,219 +59385,92 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = Object(_babel_runtime_corejs3_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_9__["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = Object(_babel_runtime_corejs3_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_9__["default"])(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return Object(_babel_runtime_corejs3_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_8__["default"])(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3___default.a) return false; if (_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3___default.a.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_3___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 
-
-
-
-
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_6___default.a === "undefined" || _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_5___default()(o) == null) { if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_4___default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_3___default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { var _context; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_8___default()(_context = Object.prototype.toString.call(o)).call(_context, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_7___default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = Object(_babel_runtime_corejs3_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16__["default"])(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = Object(_babel_runtime_corejs3_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16__["default"])(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return Object(_babel_runtime_corejs3_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15__["default"])(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default.a) return false; if (_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default.a.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-
+var lineWidth = 1;
 
 var _default = /*#__PURE__*/function (_PIXI$Graphics) {
-  Object(_babel_runtime_corejs3_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_14__["default"])(_default, _PIXI$Graphics);
+  Object(_babel_runtime_corejs3_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_7__["default"])(_default, _PIXI$Graphics);
 
   var _super = _createSuper(_default);
 
   function _default(opt) {
     var _this;
 
-    Object(_babel_runtime_corejs3_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_11__["default"])(this, _default);
-
-    var size = opt.size,
-        lineWidth = opt.lineWidth,
-        fill = _babel_runtime_corejs3_core_js_stable_instance_fill__WEBPACK_IMPORTED_MODULE_10___default()(opt),
-        alignment = opt.alignment,
-        lineColor = opt.lineColor;
+    Object(_babel_runtime_corejs3_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_4__["default"])(this, _default);
 
     _this = _super.call(this);
 
-    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__["default"])(_this), "_num", void 0);
+    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_6__["default"])(_this), "_highlighted", false);
 
-    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__["default"])(_this), "opt", void 0);
+    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_6__["default"])(_this), "_num", new PIXI.Text('', {
+      fontSize: 48
+    }));
 
-    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__["default"])(_this), "fixed", void 0);
+    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_6__["default"])(_this), "size", void 0);
 
-    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__["default"])(_this), "active", void 0);
+    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_6__["default"])(_this), "selectable", true);
 
-    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__["default"])(_this), "items", void 0);
-
-    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_17__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__["default"])(_this), "coord", void 0);
-
-    _this.coord = {
+    Object(_babel_runtime_corejs3_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_10__["default"])(Object(_babel_runtime_corejs3_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_6__["default"])(_this), "coord", {
       x: 0,
       y: 0
-    };
-    _this.opt = opt;
-
-    _this.beginFill(fill).lineStyle(lineWidth, lineColor, 1, alignment).drawRect(0, 0, size, size).endFill();
-
-    _this.fixed = !!opt.num;
-    var num = _this._num = new PIXI.Text(opt.num ? "".concat(opt.num) : '', {
-      fill: _this.fixed ? _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Black : _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Blue,
-      fontSize: 48
     });
-    num.position.set(size / 2);
-    num.anchor.set(.5);
 
-    _this.addChild(num);
+    var size = opt.size,
+        x = opt.x,
+        y = opt.y;
+    _this.size = size;
+    _this.coord.x = x;
+    _this.coord.y = y;
 
-    if (_this.fixed) return Object(_babel_runtime_corejs3_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15__["default"])(_this); // 候选数字
+    _this.beginFill(_enum__WEBPACK_IMPORTED_MODULE_11__["Color"].White).lineStyle(lineWidth, _enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Border, 1, 0).drawRect(0, 0, size, size).endFill();
 
-    _this.items = [];
+    _this.position.set(size * x, size * y);
 
-    for (var i = 0; i < 9; i++) {
-      var x = i % 3;
-      var y = i / 3 | 0;
-      var item = new PIXI.Text("".concat(i + 1), {
-        fill: _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Blue,
-        fontSize: 20
-      });
-      item.visible = false;
-      item.anchor.set(.5);
-      item.position.set((x + .5) * size / 3, (y + .5) * size / 3);
+    _this._num.anchor.set(.5);
 
-      _this.items.push(item);
+    _this._num.position.set(size / 2);
 
-      _this.addChild(item);
-    }
+    _this.addChild(_this._num);
 
     return _this;
   }
 
-  Object(_babel_runtime_corejs3_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_12__["default"])(_default, [{
-    key: "activate",
-    value: function activate() {
-      var fill = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Connect;
-      var force = arguments.length > 1 ? arguments[1] : undefined;
-      if (this.active && !force) return;
-      this.active = true;
-      var _this$opt = this.opt,
-          size = _this$opt.size,
-          lineWidth = _this$opt.lineWidth,
-          alignment = _this$opt.alignment,
-          lineColor = _this$opt.lineColor;
-      this.clear().beginFill(fill).lineStyle(lineWidth, lineColor, 1, alignment).drawRect(0, 0, size, size).endFill();
+  Object(_babel_runtime_corejs3_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_5__["default"])(_default, [{
+    key: "preset",
+    value: function preset(v) {
+      this.selectable = false;
+      this._num.text = "".concat(v);
+      this._num.style.fill = _enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Black;
     }
   }, {
     key: "select",
     value: function select() {
-      var fill = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Select;
-      this.activate(fill, true);
+      this.highlight(_enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Select, true);
     }
   }, {
-    key: "inactivate",
-    value: function inactivate() {
-      if (!this.active) return;
-      this.active = false;
-
-      var _this$opt2 = this.opt,
-          fill = _babel_runtime_corejs3_core_js_stable_instance_fill__WEBPACK_IMPORTED_MODULE_10___default()(_this$opt2),
-          size = _this$opt2.size,
-          lineWidth = _this$opt2.lineWidth,
-          alignment = _this$opt2.alignment,
-          lineColor = _this$opt2.lineColor;
-
-      this.clear().beginFill(fill).lineStyle(lineWidth, lineColor, 1, alignment).drawRect(0, 0, size, size).endFill();
+    key: "highlight",
+    value: function highlight() {
+      var color = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Connect;
+      var force = arguments.length > 1 ? arguments[1] : undefined;
+      if (this._highlighted && !force) return;
+      this._highlighted = true;
+      this.clear().beginFill(color).lineStyle(lineWidth, _enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Border, 1, 0).drawRect(0, 0, this.size, this.size).endFill();
     }
   }, {
-    key: "toggle",
-    value: function toggle(v) {
-      // 隐藏钢笔数字
-      this._num.visible = false;
-      var num;
-
-      var _iterator = _createForOfIteratorHelper(this.items),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var item = _step.value;
-
-          if (item.text === "".concat(v)) {
-            num = item;
-            break;
-          }
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-
-      num.visible = !num.visible;
+    key: "unhighlight",
+    value: function unhighlight() {
+      if (!this._highlighted) return;
+      this._highlighted = false;
+      this.clear().beginFill(_enum__WEBPACK_IMPORTED_MODULE_11__["Color"].White).lineStyle(lineWidth, _enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Border, 1, 0).drawRect(0, 0, this.size, this.size).endFill();
     }
   }, {
-    key: "fix",
-    value: function fix(v) {
-      this.fixed = true;
-      this._num.visible = true;
-      this._num.text = "".concat(v);
-      this._num.style.fill = _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Black;
-    }
-  }, {
-    key: "unfix",
-    value: function unfix() {
-      this.fixed = false;
-      this._num.style.fill = _enum__WEBPACK_IMPORTED_MODULE_18__["Color"].Blue;
-    }
-  }, {
-    key: "erase",
-    value: function erase() {
-      this._num.visible = false;
-
-      if (this.items) {
-        var _iterator2 = _createForOfIteratorHelper(this.items),
-            _step2;
-
-        try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-            var item = _step2.value;
-            item.visible = false;
-          }
-        } catch (err) {
-          _iterator2.e(err);
-        } finally {
-          _iterator2.f();
-        }
-      }
-    }
-  }, {
-    key: "num",
-    set: function set(v) {
-      // 隐藏候选数字
-      if (this.items) {
-        var _iterator3 = _createForOfIteratorHelper(this.items),
-            _step3;
-
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var item = _step3.value;
-            item.visible = false;
-          }
-        } catch (err) {
-          _iterator3.e(err);
-        } finally {
-          _iterator3.f();
-        }
-      }
-
-      var num = this._num;
-      num.visible = true;
-      num.text = "".concat(v);
-    },
+    key: "value",
     get: function get() {
-      return this._num.visible ? +this._num.text : null;
+      return +this._num.text;
     }
   }]);
 
@@ -59840,6 +59588,7 @@ var Mode;
 var Color;
 
 (function (Color) {
+  Color[Color["Border"] = 13423325] = "Border";
   Color[Color["Gray"] = 5592405] = "Gray";
   Color[Color["Blue"] = 2250416] = "Blue";
   Color[Color["Black"] = 526344] = "Black";
@@ -59886,12 +59635,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/slice */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js");
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/map */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/map.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
-/* harmony import */ var _Cell__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Cell */ "./src/module/Cell.ts");
-/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
-
+/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
+/* harmony import */ var _Cell__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Cell */ "./src/module/Cell.ts");
 
 
 
@@ -59909,51 +59654,109 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-
-var size = 80;
-var grid = new PIXI.Graphics().beginFill(0xffffff, .5).lineStyle(4, 0x555555, 1, 1).drawRect(0, 0, size * 9, size * 9);
+var cells = [];
+var rows = [];
+var cols = [];
+var regions = [];
+var grid = new PIXI.Graphics();
 grid.interactive = true;
-grid.pivot.set(size * 4.5, 0);
 grid.on('pointerdown', function (e) {
-  if (e.target.name !== 'cell') return;
+  if (!(e.target instanceof _Cell__WEBPACK_IMPORTED_MODULE_9__["default"])) return;
   var cell = e.target;
   var coord = cell.coord;
-  inactivate();
+  unhighlight();
   highlight(coord.x, coord.y);
-  alike(cell.num);
-  if (cell.fixed) return grid.cell = null;
+  alike(cell.value);
+  if (!cell.selectable) return;
   cell.select();
-  grid.cell = cell;
 });
-var cells;
-var rows;
-var cols;
-var boxes;
-/** 高亮关联的cell */
 
-function highlight(x, y) {
-  var _iterator = _createForOfIteratorHelper(rows[y]),
+grid.init = function (opt) {
+  var size = opt.size;
+  this.clear().lineStyle(4, _enum__WEBPACK_IMPORTED_MODULE_8__["Color"].Black, 1, 1).beginFill(_enum__WEBPACK_IMPORTED_MODULE_8__["Color"].White).drawRect(0, 0, size * 9, size * 9).endFill();
+
+  for (var i = 0; i < 81; i++) {
+    var x = i % 9;
+    var y = i / 9 | 0;
+    var cell = new _Cell__WEBPACK_IMPORTED_MODULE_9__["default"]({
+      size: size,
+      y: y,
+      x: x
+    });
+    cell.interactive = true;
+    cells.push(cell);
+    cols[x] || (cols[x] = []);
+    rows[y] || (rows[y] = []);
+    cols[x].push(cell);
+    rows[y].push(cell);
+    {
+      var dx = x / 3 | 0;
+      var dy = y / 3 | 0;
+
+      var _i = dy * 3 + dx;
+
+      regions[_i] || (regions[_i] = []);
+
+      regions[_i].push(cell);
+    }
+    this.addChild(cell);
+  } // 横竖两条线
+
+
+  for (var _x = 0; _x < 2; _x++) {
+    var line = new PIXI.Graphics().beginFill(_enum__WEBPACK_IMPORTED_MODULE_8__["Color"].Black).drawRect(0, 0, 2, size * 9).endFill();
+    line.position.set((_x + 1) * size * 3 - 1, 0);
+    grid.addChild(line);
+  }
+
+  for (var _y = 0; _y < 2; _y++) {
+    var _line = new PIXI.Graphics().beginFill(_enum__WEBPACK_IMPORTED_MODULE_8__["Color"].Black).drawRect(0, 0, size * 9, 2).endFill();
+
+    _line.position.set(0, (_y + 1) * size * 3 - 1);
+
+    grid.addChild(_line);
+  }
+};
+
+grid.refresh = function (_ref) {
+  var data = _ref.data;
+
+  for (var i = 0; i < 81; i++) {
+    var num = +data[0][i];
+    num && cells[i].preset(num);
+  }
+};
+/** 高亮相同数字的cell */
+
+
+function alike(v) {
+  if (!v) return;
+
+  var _iterator = _createForOfIteratorHelper(cells),
       _step;
 
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var cell = _step.value;
-      cell.activate();
+      if (cell.value === v) cell.highlight(_enum__WEBPACK_IMPORTED_MODULE_8__["Color"].Same, true);
     }
   } catch (err) {
     _iterator.e(err);
   } finally {
     _iterator.f();
   }
+}
+/** 高亮关联的cell */
 
-  var _iterator2 = _createForOfIteratorHelper(cols[x]),
+
+function highlight(x, y) {
+  var _iterator2 = _createForOfIteratorHelper(rows[y]),
       _step2;
 
   try {
     for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var _cell = _step2.value;
-
-      _cell.activate();
+      var cell = _step2.value;
+      cell.highlight();
     }
   } catch (err) {
     _iterator2.e(err);
@@ -59961,32 +59764,31 @@ function highlight(x, y) {
     _iterator2.f();
   }
 
-  var i = (x / 3 | 0) + (y / 3 | 0) * 3;
-
-  var _iterator3 = _createForOfIteratorHelper(boxes[i]),
+  var _iterator3 = _createForOfIteratorHelper(cols[x]),
       _step3;
 
   try {
     for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-      var _cell2 = _step3.value;
+      var _cell = _step3.value;
 
-      _cell2.activate();
+      _cell.highlight();
     }
   } catch (err) {
     _iterator3.e(err);
   } finally {
     _iterator3.f();
   }
-}
 
-function inactivate() {
-  var _iterator4 = _createForOfIteratorHelper(cells),
+  var i = (x / 3 | 0) + (y / 3 | 0) * 3;
+
+  var _iterator4 = _createForOfIteratorHelper(regions[i]),
       _step4;
 
   try {
     for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-      var cell = _step4.value;
-      cell.inactivate();
+      var _cell2 = _step4.value;
+
+      _cell2.highlight();
     }
   } catch (err) {
     _iterator4.e(err);
@@ -59995,30 +59797,14 @@ function inactivate() {
   }
 }
 
-grid.check = function () {
-  var data = this.data;
-  var answer = data[1];
-
-  for (var i = 0, j = cells.length; i < j; i++) {
-    var cell = cells[i];
-    if ("".concat(cell.num) !== answer[i]) return false;
-  }
-
-  return true;
-};
-/** 高亮相同数字的cell */
-
-
-function alike(v) {
-  if (!v) return;
-
+function unhighlight() {
   var _iterator5 = _createForOfIteratorHelper(cells),
       _step5;
 
   try {
     for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-      var item = _step5.value;
-      if (item.num === v) item.activate(_enum__WEBPACK_IMPORTED_MODULE_11__["Color"].Same, true);
+      var cell = _step5.value;
+      cell.unhighlight();
     }
   } catch (err) {
     _iterator5.e(err);
@@ -60026,112 +59812,6 @@ function alike(v) {
     _iterator5.f();
   }
 }
-
-grid.layout = function (data, restore) {
-  cells = [];
-  rows = [];
-  cols = [];
-  boxes = [];
-  this.data = data;
-  var num;
-
-  for (var i = 0; i < 81; i++) {
-    var _rows, _cols;
-
-    var x = i % 9;
-    var y = i / 9 | 0;
-    num = +data[0][i];
-    var cell = new _Cell__WEBPACK_IMPORTED_MODULE_10__["default"]({
-      num: num,
-      size: size,
-      lineWidth: .5,
-      lineColor: 0xccd2dd,
-      alignment: 0,
-      fill: 0xffffff
-    });
-    cell.name = 'cell';
-    cell.coord.x = x;
-    cell.coord.y = y;
-    (_rows = rows)[y] || (_rows[y] = []);
-    rows[y].push(cell);
-    (_cols = cols)[x] || (_cols[x] = []);
-    cols[x].push(cell); // 宫
-
-    {
-      var _boxes;
-
-      var _x = x / 3 | 0;
-
-      var _y = y / 3 | 0;
-
-      var _i = _y * 3 + _x;
-
-      (_boxes = boxes)[_i] || (_boxes[_i] = []);
-
-      boxes[_i].push(cell);
-    }
-    cell.interactive = true;
-    cell.position.set(x * size, y * size);
-    cells.push(cell);
-    grid.addChild(cell);
-    if (!restore || !_util__WEBPACK_IMPORTED_MODULE_9__["store"].record.cells) continue; // 继续上次
-
-    var old = _util__WEBPACK_IMPORTED_MODULE_9__["store"].record.cells[i];
-    if (old.fixed) continue;
-    if (old.num) cell.num = old.num;else {
-      var _iterator6 = _createForOfIteratorHelper(old.items),
-          _step6;
-
-      try {
-        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-          var _x2 = _step6.value;
-          _x2 && cell.toggle(_x2);
-        }
-      } catch (err) {
-        _iterator6.e(err);
-      } finally {
-        _iterator6.f();
-      }
-    }
-  }
-
-  for (var _x3 = 0; _x3 < 2; _x3++) {
-    var line = new PIXI.Graphics().beginFill(0x555555).drawRect(0, 0, 2, size * 9).endFill();
-    line.position.set((_x3 + 1) * size * 3 - 1, 0);
-    grid.addChild(line);
-  }
-
-  for (var _y2 = 0; _y2 < 2; _y2++) {
-    var _line = new PIXI.Graphics().beginFill(0x555555).drawRect(0, 0, size * 9, 2).endFill();
-
-    _line.position.set(0, (_y2 + 1) * size * 3 - 1);
-
-    grid.addChild(_line);
-  }
-};
-
-grid.update = function (data) {
-  for (var i = 0, j = cells.length; i < j; i++) {
-    var cell = cells[i];
-    var num = +data[0][i];
-    cell.erase();
-    num ? cell.fix(num) : cell.unfix();
-  }
-};
-
-grid.save = function () {
-  _util__WEBPACK_IMPORTED_MODULE_9__["store"].record.cells = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_8___default()(cells).call(cells, function (cell) {
-    var _cell$items;
-
-    return {
-      num: cell.num,
-      fixed: cell.fixed,
-      items: (_cell$items = cell.items) === null || _cell$items === void 0 ? void 0 : _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_8___default()(_cell$items).call(_cell$items, function (item) {
-        return item.visible ? +item.text : 0;
-      })
-    };
-  });
-};
 
 /* harmony default export */ __webpack_exports__["default"] = (grid);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
@@ -60168,7 +59848,7 @@ var head = new PIXI.Graphics();
 head.init = function (opt) {
   var width = opt.width,
       height = opt.height;
-  head.clear().beginFill(0xffcc33).drawRect(0, 0, width, height).endFill();
+  this.beginFill(0, 0).drawRect(0, 0, width, height).endFill();
   var grade = new PIXI.Text("\u96BE\u5EA6: ".concat(grades[opt.grade]), {
     fill: _enum__WEBPACK_IMPORTED_MODULE_4__["Color"].Gray,
     fontSize: 26
@@ -60181,7 +59861,10 @@ head.init = function (opt) {
   });
   progress.anchor.set(.5, .5);
   progress.position.set(width / 2, height / 2);
-  var duration = new PIXI.Text("\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_3__["store"].last.duration)));
+  var duration = new PIXI.Text("\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_3__["store"].last.duration)), {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_4__["Color"].Gray,
+    fontSize: 26
+  });
   duration.anchor.set(1, .5);
   duration.position.set(width, height / 2);
   void function loop() {
@@ -60196,7 +59879,7 @@ head.init = function (opt) {
 head.refresh = function (opt) {
   var _context;
 
-  _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_1___default()(_context = head.children).call(_context, function (child, i) {
+  _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_1___default()(_context = this.children).call(_context, function (child, i) {
     switch (i) {
       case 0:
         {
@@ -60225,13 +59908,21 @@ function format(i) {
   var h = 0,
       m = 0;
   var queue = [];
-  if (i > 59) m = i / 60 | 0;
-  if (m > 59) h = m / 60 | 0;
-  i -= h * 3600 + m * 60;
-  if (h) queue.push(h, '时');
-  if (m) queue.push(m, '分');
-  if (i) queue.push(i, '秒');
-  return queue.length ? queue.join(' ') : '0 秒';
+
+  if (i > 59) {
+    m = i / 60 | 0;
+    i -= m * 60;
+  }
+
+  if (m > 59) {
+    h = m / 60 | 0;
+    m -= h * 60;
+  }
+
+  if (h) queue.push(h, 'h');
+  if (m) queue.push(m, 'm');
+  if (i) queue.push(i, 's');
+  return queue.length ? queue.join(' ') : '0 s';
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
@@ -60748,13 +60439,21 @@ function format(i) {
   var h = 0,
       m = 0;
   var queue = [];
-  if (i > 59) m = i / 60 | 0;
-  if (m > 59) h = m / 60 | 0;
-  i -= h * 3600 + m * 60;
-  if (h) queue.push(h, '时');
-  if (m) queue.push(m, '分');
-  if (i) queue.push(i, '秒');
-  return queue.length ? queue.join(' ') : '0 秒';
+
+  if (i > 59) {
+    m = i / 60 | 0;
+    i -= m * 60;
+  }
+
+  if (m > 59) {
+    h = m / 60 | 0;
+    m -= h * 60;
+  }
+
+  if (h) queue.push(h, 'h');
+  if (m) queue.push(m, 'm');
+  if (i) queue.push(i, 's');
+  return queue.length ? queue.join(' ') : '0 s';
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
@@ -60820,10 +60519,18 @@ function _init() {
             });
             _module__WEBPACK_IMPORTED_MODULE_5__["head"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_5__["head"].width / 2, 0);
             _module__WEBPACK_IMPORTED_MODULE_5__["head"].position.set(_core__WEBPACK_IMPORTED_MODULE_4__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_4__["pixelRatio"]);
-            container.addChild(_module__WEBPACK_IMPORTED_MODULE_5__["head"]);
+            _module__WEBPACK_IMPORTED_MODULE_5__["grid"].init({
+              size: 80
+            });
+            _module__WEBPACK_IMPORTED_MODULE_5__["grid"].pivot.set(80 * 4.5, 0);
+            _module__WEBPACK_IMPORTED_MODULE_5__["grid"].position.set(_core__WEBPACK_IMPORTED_MODULE_4__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_5__["head"].y + _module__WEBPACK_IMPORTED_MODULE_5__["head"].height + 20);
+            _module__WEBPACK_IMPORTED_MODULE_5__["grid"].refresh({
+              data: _level__WEBPACK_IMPORTED_MODULE_7__["default"][_util__WEBPACK_IMPORTED_MODULE_6__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_6__["store"].last.index]
+            });
+            container.addChild(_module__WEBPACK_IMPORTED_MODULE_5__["head"], _module__WEBPACK_IMPORTED_MODULE_5__["grid"]);
             _core__WEBPACK_IMPORTED_MODULE_4__["stage"].addChild(container);
 
-          case 9:
+          case 13:
           case "end":
             return _context3.stop();
         }

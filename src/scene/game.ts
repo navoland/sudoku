@@ -1,5 +1,5 @@
 import {pixelRatio, stage, screen} from '~/core'
-import {btnBack, head} from '~/module'
+import {btnBack, head, grid} from '~/module'
 import {store} from '~/util'
 import levels from '@/level'
 
@@ -19,7 +19,14 @@ async function init() {
   head.pivot.set(head.width / 2, 0)
   head.position.set(screen.width / 2, (rect.bottom + min(rect.top, 20)) * pixelRatio)
 
-  container.addChild(head)
+  grid.init({
+    size: 80
+  })
+  grid.pivot.set(80 * 4.5, 0)
+  grid.position.set(screen.width / 2, head.y + head.height + 20)
+  grid.refresh({data: levels[store.last.grade][store.last.index] as ILevelData})
+
+  container.addChild(head, grid)
   stage.addChild(container)
 }
 

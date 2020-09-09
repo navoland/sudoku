@@ -6,9 +6,8 @@ const head: Head = new PIXI.Graphics()
 
 head.init = function(opt) {
   const {width, height} = opt
-  head
-    .clear()
-    .beginFill(0xffcc33)
+  this
+    .beginFill(0, 0)
     .drawRect(0, 0, width, height)
     .endFill()
 
@@ -26,7 +25,10 @@ head.init = function(opt) {
   progress.anchor.set(.5, .5)
   progress.position.set(width / 2, height / 2)
 
-  const duration = new PIXI.Text(`用时: ${format(store.last.duration)}`)
+  const duration = new PIXI.Text(`用时: ${format(store.last.duration)}`, {
+    fill: Color.Gray,
+    fontSize: 26
+  })
   duration.anchor.set(1, .5)
   duration.position.set(width, height / 2)
 
@@ -41,7 +43,7 @@ head.init = function(opt) {
 }
 
 head.refresh = function(opt) {
-  head.children.forEach((child: PIXI.Text, i) => {
+  this.children.forEach((child: PIXI.Text, i) => {
     switch (i) {
       case 0: {
         child.text = `难度: ${grades[opt.grade]}`
@@ -78,11 +80,16 @@ export default head
 function format(i: number) {
   let h = 0, m = 0
   const queue = []
-  if (i > 59) m = i / 60 | 0
-  if (m > 59) h = m / 60 | 0
-  i -= h * 3600 + m * 60
-  if (h) queue.push(h, '时')
-  if (m) queue.push(m, '分')
-  if (i) queue.push(i, '秒')
-  return queue.length ? queue.join(' ') : '0 秒'
+  if (i > 59) {
+    m = i / 60 | 0
+    i -= m * 60
+  }
+  if (m > 59) {
+    h = m / 60 | 0
+    m -= h * 60
+  }
+  if (h) queue.push(h, 'h')
+  if (m) queue.push(m, 'm')
+  if (i) queue.push(i, 's')
+  return queue.length ? queue.join(' ') : '0 s'
 }

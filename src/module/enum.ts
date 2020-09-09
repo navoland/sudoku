@@ -4,6 +4,7 @@ export enum Mode {
 }
 
 export enum Color {
+  Border = 0xccd2dd,
   Gray = 0x555555,
   Blue = 0x2256b0,
   Black = 0x080808,
