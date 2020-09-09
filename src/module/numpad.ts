@@ -1,11 +1,11 @@
 import {Color} from './enum'
 
-let numpad: Numpad = new PIXI.Graphics()
+const numpad: Numpad = new PIXI.Graphics()
 
 numpad.init = function() {
   this
     .clear()
-    .beginFill(0, .5)
+    .beginFill(0, 0)
     .drawRect(0, 0, 720, 80)
     .endFill()
 
@@ -19,7 +19,7 @@ numpad.init = function() {
     num.interactive = true
     num.anchor.set(.5)
     num.hitArea = hitArea
-    num.position.set(40 + 80 * (i - 1), 40)
+    num.position.set(40 + 80 * i, 40)
     this.addChild(num)
   }
 

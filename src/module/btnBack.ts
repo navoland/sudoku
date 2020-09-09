@@ -26,7 +26,7 @@ function init() {
       sx: .5,
       sy: .5
     })
-    sound.play('back.ogg')
+    sound.play('back.mp3')
     monitor.emit('scene:back')
   }).on('pointerupoutside', () => {
     tween({

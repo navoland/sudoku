@@ -3,6 +3,10 @@ let store = {
 
   newbie: true,
 
+  tip: {
+    count: 3
+  },
+
   last: null as {
     grade: number
     index: number

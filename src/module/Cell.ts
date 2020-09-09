@@ -8,6 +8,7 @@ export default class extends PIXI.Graphics {
   private _items: PIXI.Text[] = []
 
   size: number
+  index: number
   selectable = true
   coord = {x: 0, y: 0}
 
@@ -31,7 +32,7 @@ export default class extends PIXI.Graphics {
     for (let i = 0; i < 9; i++) {
       const x = i % 3
       const y = i / 3 | 0
-      const item = new PIXI.Text(`${i + 1}`, {fill: Color.Blue, fontSize: 20})
+      const item = new PIXI.Text(`${i + 1}`, {fill: Color.Blue, fontSize: 20, fontWeight: 'bold'})
       item.visible = false
       item.anchor.set(.5)
       item.position.set((x + .5) * size / 3, (y + .5) * size / 3)
@@ -58,6 +59,7 @@ export default class extends PIXI.Graphics {
 
   preset(v: number) {
     this.selectable = false
+    this._num.visible = true
     this._num.text = `${v}`
     this._num.style.fill = Color.Black
   }
@@ -89,13 +91,15 @@ export default class extends PIXI.Graphics {
   }
 
   get value() {
-    return +this._num.text
+    return this._num.visible && +this._num.text
   }
 
   set value(v: number) {
     this._num.text = `${v}`
+    this._num.style.fill = Color.Blue
     if (this._num.visible) return
     this._num.visible = true
+    for (const item of this._items) item.visible = false
   }
 }
 

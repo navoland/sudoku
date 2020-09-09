@@ -1,15 +1,18 @@
 import {Color, Mode} from './enum'
 import Cell from './Cell'
-import {sound} from '.'
+import * as sound from './sound'
+import {createPromise, delay, store} from '~/util'
+import {easing, tween} from 'popmotion'
 
-/** 选中的可输入格子 */
 let mode = Mode.Pen
 let selected: Cell
-let cells: Cell[] = []
-let rows: Cell[][] = []
-let cols: Cell[][] = []
-let regions: Cell[][] = []
-let grid: Grid = new PIXI.Graphics()
+let data: ILevelData
+
+const cells: Cell[] = []
+const rows: Cell[][] = []
+const cols: Cell[][] = []
+const regions: Cell[][] = []
+const grid: Grid = new PIXI.Graphics()
 
 grid.interactive = true
 grid.on('pointerdown', (e: IEvent) => {
@@ -37,6 +40,7 @@ grid.init = function(opt) {
     const x = i % 9
     const y = i / 9 | 0
     const cell = new Cell({size, y, x})
+    cell.index = i
     cell.interactive = true
     cells.push(cell)
     cols[x] ||= []
@@ -77,21 +81,62 @@ grid.init = function(opt) {
   }
 }
 
-grid.refresh = function({data}) {
-  for (let i = 0; i < 81; i++) {
-    const num = +data[0][i]
-    num && cells[i].preset(num)
+grid.refresh = async function(opt) {
+  data = opt.data
+  for (const row of rows) {
+    const [promise, resolve] = createPromise()
+    delay(.1).then(resolve)
+    for (const cell of row) {
+      cell.erase()
+      tween({
+        from: {r: .2, g: .2, b: .2},
+        to: {r: 1, g: 1, b: 1},
+        duration: 2e2,
+        ease: easing.easeOut
+      }).start({
+        update: (v: any) => {
+          cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0
+        },
+        complete: () => {
+          const num = +data[0][cell.index]
+          num && cell.preset(num)
+        }
+      })
+    }
+    await promise
   }
 }
 
-grid.on('input', (v: number) => {
+grid.switch = function() {
+  mode = mode === Mode.Pen ? Mode.Pencil : Mode.Pen
+  sound.play(`${mode === Mode.Pen ? 'pen' : 'pencil'}.mp3`)
+}
+
+grid.erase = function() {
   if (!selected) return
-  mode === Mode.Pen ? selected.value = v : selected.note(v)
-  sound.play(`${mode === Mode.Pen ? 'pen' : 'pencil'}.ogg`)
-}).on('mode', (v: Mode) => {
-  mode = v
-  sound.play(`${mode === Mode.Pen ? 'pen' : 'pencil'}.ogg`)
-})
+  sound.play('erase.mp3')
+  selected.erase()
+}
+
+grid.input = function(v) {
+  if (!selected) return
+  if (mode === Mode.Pen) {
+    selected.value = v
+    sound.play('pen.mp3')
+    if (check()) return grid.emit('done')
+  } else {
+    selected.note(v)
+    sound.play('pencil.mp3')
+  }
+}
+
+grid.tip = function() {
+  if (!selected) return wx.showToast({title: '请先选中需要填写的方格', icon: 'none'})
+  store.tip.count--
+  selected.value = +data[1][selected.index]
+  sound.play('hint.mp3')
+  if (check()) grid.emit('done')
+}
 
 /** 高亮相同数字的cell */
 function alike(v: number) {
@@ -99,6 +144,14 @@ function alike(v: number) {
   for (const cell of cells) {
     if (cell.value === v) cell.highlight(Color.Same, true)
   }
+}
+
+function check() {
+  for (let i = 0; i < 81; i++) {
+    const cell = cells[i]
+    if (cell.value !== +data[1][i]) return false
+  }
+  return true
 }
 
 /** 高亮关联的cell */
@@ -125,6 +178,10 @@ interface IOption {
 }
 
 interface Grid extends PIXI.Graphics {
+  tip?(): void
+  erase?(): void
+  switch?(): void
+  input?(v: number): void
   init?(this: Grid, opt: IOption): void
   refresh?(this: Grid, opt: {data: ILevelData}): void
 }

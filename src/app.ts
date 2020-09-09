@@ -35,6 +35,16 @@ preload().then(() => {
   wx.onTouchStart(handle)
 }
 
+{
+  const videoAd = wx.createRewardedVideoAd({
+    adUnitId: 'adunit-035f929608f8c858'
+  })
+
+  videoAd.onError(console.log)
+
+  window.videoAd = videoAd
+}
+
 // 设计尺寸
 window.design = {width: 750, height: 1334}
 window.zoom = min(screen.width / window.design.width, screen.height / window.design.height)

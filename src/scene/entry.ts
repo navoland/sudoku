@@ -62,6 +62,7 @@ function init() {
 
   layout.pivot.set(width / 2, height / 2)
   layout.position.set(screen.width / 2, screen.height / 2)
+  layout.scale.set(window.zoom)
   container.addChild(layout)
   stage.addChild(container)
   refresh()

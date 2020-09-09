@@ -7,6 +7,7 @@ interface Window {
   zoom: number
   design: {width: number, height: number}
   interaction: Promise<wx.IRect>
+  videoAd: wx.RewardedVideoAd
 }
 
 /** for wechat */
@@ -31,6 +32,7 @@ declare module wx {
   interface RewardedVideoAd {
     load(): Promise<unknown>
     show(): Promise<unknown>
+    offClose(opt: Function): void
     onClose(opt: (opt: {isEnded: boolean}) => void): void
     onError(opt: ({errMsg: string, errCode: number}) => void): void
   }
