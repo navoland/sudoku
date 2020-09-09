@@ -1,7 +1,10 @@
-import {Color} from './enum'
+import {Color, Mode} from './enum'
 import Cell from './Cell'
+import {sound} from '.'
 
-
+/** 选中的可输入格子 */
+let mode = Mode.Pen
+let selected: Cell
 let cells: Cell[] = []
 let rows: Cell[][] = []
 let cols: Cell[][] = []
@@ -16,7 +19,8 @@ grid.on('pointerdown', (e: IEvent) => {
   unhighlight()
   highlight(coord.x, coord.y)
   alike(cell.value)
-  if (!cell.selectable) return
+  if (!cell.selectable) return selected = null
+  selected = cell
   cell.select()
 })
 
@@ -79,6 +83,15 @@ grid.refresh = function({data}) {
     num && cells[i].preset(num)
   }
 }
+
+grid.on('input', (v: number) => {
+  if (!selected) return
+  mode === Mode.Pen ? selected.value = v : selected.note(v)
+  sound.play(`${mode === Mode.Pen ? 'pen' : 'pencil'}.ogg`)
+}).on('mode', (v: Mode) => {
+  mode = v
+  sound.play(`${mode === Mode.Pen ? 'pen' : 'pencil'}.ogg`)
+})
 
 /** 高亮相同数字的cell */
 function alike(v: number) {

@@ -5,6 +5,7 @@ const lineWidth = 1
 export default class extends PIXI.Graphics {
   private _highlighted = false
   private _num = new PIXI.Text('', {fontSize: 48})
+  private _items: PIXI.Text[] = []
 
   size: number
   selectable = true
@@ -26,6 +27,33 @@ export default class extends PIXI.Graphics {
     this._num.anchor.set(.5)
     this._num.position.set(size / 2)
     this.addChild(this._num)
+
+    for (let i = 0; i < 9; i++) {
+      const x = i % 3
+      const y = i / 3 | 0
+      const item = new PIXI.Text(`${i + 1}`, {fill: Color.Blue, fontSize: 20})
+      item.visible = false
+      item.anchor.set(.5)
+      item.position.set((x + .5) * size / 3, (y + .5) * size / 3)
+      this._items.push(item)
+      this.addChild(item)
+    }
+  }
+
+  note(v: number) {
+    // 隐藏钢笔数字
+    this._num.visible = false
+    for (const item of this._items) {
+      if (+item.text === v) {
+        item.visible = !item.visible
+        break
+      }
+    }
+  }
+
+  erase() {
+    this._num.visible = false
+    for (const item of this._items) item.visible = false
   }
 
   preset(v: number) {
@@ -62,6 +90,12 @@ export default class extends PIXI.Graphics {
 
   get value() {
     return +this._num.text
+  }
+
+  set value(v: number) {
+    this._num.text = `${v}`
+    if (this._num.visible) return
+    this._num.visible = true
   }
 }
 

@@ -1,5 +1,5 @@
 import {pixelRatio, stage, screen} from '~/core'
-import {btnBack, head, grid} from '~/module'
+import {btnBack, head, grid, numpad} from '~/module'
 import {store} from '~/util'
 import levels from '@/level'
 
@@ -26,7 +26,14 @@ async function init() {
   grid.position.set(screen.width / 2, head.y + head.height + 20)
   grid.refresh({data: levels[store.last.grade][store.last.index] as ILevelData})
 
-  container.addChild(head, grid)
+  numpad.init()
+  numpad.pivot.set(numpad.width / 2, 0)
+  numpad.position.set(screen.width / 2, grid.y + grid.height + 20)
+  numpad.on('output', (v: number) => {
+    grid.emit('input', v)
+  })
+
+  container.addChild(head, grid, numpad)
   stage.addChild(container)
 }
 
@@ -35,7 +42,9 @@ function refresh() {
     grade: store.last.grade,
     index: `${store.last.index + 1} / ${levels[store.last.grade].length}`
   })
-  container.visible = true
+  grid.refresh({
+    data: levels[store.last.grade][store.last.index] as ILevelData
+  })
 }
 
 export function show(opt: {grade: number, index: number}) {
