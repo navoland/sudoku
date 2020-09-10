@@ -4,8 +4,15 @@ import {createPromise} from './util'
 
 const {min} = Math
 
+wx.showLoading({title: '加载资源'})
+
 preload().then(() => {
   monitor.emit('scene:go', 'entry')
+}).catch((err: Error) => {
+  wx.showToast({title: '资源加载失败', icon: 'none'})
+  console.log(err)
+}).finally(() => {
+  wx.hideLoading()
 })
 
 // 路由
