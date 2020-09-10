@@ -18,6 +18,7 @@ toolbar.init = function() {
     if (!(e.target instanceof PIXI.Sprite)) return
     const {name} = e.target
     if (name === 'pencil') {
+      mode ^= 1
       e.target.tint = mode ? Color.Blue : Color.Gray
     }
     this.emit('output', e.target.name)
@@ -48,7 +49,7 @@ toolbar.refresh = function(opt) {
   badge.text = `${opt.count}`
   if (opt.mode == null) return
   mode = opt.mode
-  void ((this.children[1] as PIXI.Sprite).tint = mode ? Color.Gray : Color.Blue)
+  void ((this.children[1] as PIXI.Sprite).tint = mode ? Color.Blue : Color.Gray)
 }
 
 interface Toolbar extends PIXI.Graphics {

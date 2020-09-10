@@ -120,7 +120,7 @@ declare module wx {
     confirmColor?: string
 
     fail?: () => void
-    success?: () => void
+    success?: (opt: {confirm: boolean, cancel: boolean}) => void
     complete?: () => void
   })
 

@@ -49663,6 +49663,537 @@ module.exports = exports['default'];
 
 /***/ }),
 
+/***/ "./node_modules/node-libs-browser/node_modules/punycode/punycode.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/node-libs-browser/node_modules/punycode/punycode.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
+;(function(root) {
+
+	/** Detect free variables */
+	var freeExports =  true && exports &&
+		!exports.nodeType && exports;
+	var freeModule =  true && module &&
+		!module.nodeType && module;
+	var freeGlobal = typeof global == 'object' && global;
+	if (
+		freeGlobal.global === freeGlobal ||
+		freeGlobal.window === freeGlobal ||
+		freeGlobal.self === freeGlobal
+	) {
+		root = freeGlobal;
+	}
+
+	/**
+	 * The `punycode` object.
+	 * @name punycode
+	 * @type Object
+	 */
+	var punycode,
+
+	/** Highest positive signed 32-bit float value */
+	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+	/** Bootstring parameters */
+	base = 36,
+	tMin = 1,
+	tMax = 26,
+	skew = 38,
+	damp = 700,
+	initialBias = 72,
+	initialN = 128, // 0x80
+	delimiter = '-', // '\x2D'
+
+	/** Regular expressions */
+	regexPunycode = /^xn--/,
+	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
+
+	/** Error messages */
+	errors = {
+		'overflow': 'Overflow: input needs wider integers to process',
+		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+		'invalid-input': 'Invalid input'
+	},
+
+	/** Convenience shortcuts */
+	baseMinusTMin = base - tMin,
+	floor = Math.floor,
+	stringFromCharCode = String.fromCharCode,
+
+	/** Temporary variable */
+	key;
+
+	/*--------------------------------------------------------------------------*/
+
+	/**
+	 * A generic error utility function.
+	 * @private
+	 * @param {String} type The error type.
+	 * @returns {Error} Throws a `RangeError` with the applicable error message.
+	 */
+	function error(type) {
+		throw new RangeError(errors[type]);
+	}
+
+	/**
+	 * A generic `Array#map` utility function.
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} callback The function that gets called for every array
+	 * item.
+	 * @returns {Array} A new array of values returned by the callback function.
+	 */
+	function map(array, fn) {
+		var length = array.length;
+		var result = [];
+		while (length--) {
+			result[length] = fn(array[length]);
+		}
+		return result;
+	}
+
+	/**
+	 * A simple `Array#map`-like wrapper to work with domain name strings or email
+	 * addresses.
+	 * @private
+	 * @param {String} domain The domain name or email address.
+	 * @param {Function} callback The function that gets called for every
+	 * character.
+	 * @returns {Array} A new string of characters returned by the callback
+	 * function.
+	 */
+	function mapDomain(string, fn) {
+		var parts = string.split('@');
+		var result = '';
+		if (parts.length > 1) {
+			// In email addresses, only the domain name should be punycoded. Leave
+			// the local part (i.e. everything up to `@`) intact.
+			result = parts[0] + '@';
+			string = parts[1];
+		}
+		// Avoid `split(regex)` for IE8 compatibility. See #17.
+		string = string.replace(regexSeparators, '\x2E');
+		var labels = string.split('.');
+		var encoded = map(labels, fn).join('.');
+		return result + encoded;
+	}
+
+	/**
+	 * Creates an array containing the numeric code points of each Unicode
+	 * character in the string. While JavaScript uses UCS-2 internally,
+	 * this function will convert a pair of surrogate halves (each of which
+	 * UCS-2 exposes as separate characters) into a single code point,
+	 * matching UTF-16.
+	 * @see `punycode.ucs2.encode`
+	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+	 * @memberOf punycode.ucs2
+	 * @name decode
+	 * @param {String} string The Unicode input string (UCS-2).
+	 * @returns {Array} The new array of code points.
+	 */
+	function ucs2decode(string) {
+		var output = [],
+		    counter = 0,
+		    length = string.length,
+		    value,
+		    extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	/**
+	 * Creates a string based on an array of numeric code points.
+	 * @see `punycode.ucs2.decode`
+	 * @memberOf punycode.ucs2
+	 * @name encode
+	 * @param {Array} codePoints The array of numeric code points.
+	 * @returns {String} The new Unicode string (UCS-2).
+	 */
+	function ucs2encode(array) {
+		return map(array, function(value) {
+			var output = '';
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+			return output;
+		}).join('');
+	}
+
+	/**
+	 * Converts a basic code point into a digit/integer.
+	 * @see `digitToBasic()`
+	 * @private
+	 * @param {Number} codePoint The basic numeric code point value.
+	 * @returns {Number} The numeric value of a basic code point (for use in
+	 * representing integers) in the range `0` to `base - 1`, or `base` if
+	 * the code point does not represent a value.
+	 */
+	function basicToDigit(codePoint) {
+		if (codePoint - 48 < 10) {
+			return codePoint - 22;
+		}
+		if (codePoint - 65 < 26) {
+			return codePoint - 65;
+		}
+		if (codePoint - 97 < 26) {
+			return codePoint - 97;
+		}
+		return base;
+	}
+
+	/**
+	 * Converts a digit/integer into a basic code point.
+	 * @see `basicToDigit()`
+	 * @private
+	 * @param {Number} digit The numeric value of a basic code point.
+	 * @returns {Number} The basic code point whose value (when used for
+	 * representing integers) is `digit`, which needs to be in the range
+	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+	 * used; else, the lowercase form is used. The behavior is undefined
+	 * if `flag` is non-zero and `digit` has no uppercase form.
+	 */
+	function digitToBasic(digit, flag) {
+		//  0..25 map to ASCII a..z or A..Z
+		// 26..35 map to ASCII 0..9
+		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+	}
+
+	/**
+	 * Bias adaptation function as per section 3.4 of RFC 3492.
+	 * https://tools.ietf.org/html/rfc3492#section-3.4
+	 * @private
+	 */
+	function adapt(delta, numPoints, firstTime) {
+		var k = 0;
+		delta = firstTime ? floor(delta / damp) : delta >> 1;
+		delta += floor(delta / numPoints);
+		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+			delta = floor(delta / baseMinusTMin);
+		}
+		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+	}
+
+	/**
+	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The Punycode string of ASCII-only symbols.
+	 * @returns {String} The resulting string of Unicode symbols.
+	 */
+	function decode(input) {
+		// Don't use UCS-2
+		var output = [],
+		    inputLength = input.length,
+		    out,
+		    i = 0,
+		    n = initialN,
+		    bias = initialBias,
+		    basic,
+		    j,
+		    index,
+		    oldi,
+		    w,
+		    k,
+		    digit,
+		    t,
+		    /** Cached calculation results */
+		    baseMinusT;
+
+		// Handle the basic code points: let `basic` be the number of input code
+		// points before the last delimiter, or `0` if there is none, then copy
+		// the first basic code points to the output.
+
+		basic = input.lastIndexOf(delimiter);
+		if (basic < 0) {
+			basic = 0;
+		}
+
+		for (j = 0; j < basic; ++j) {
+			// if it's not a basic code point
+			if (input.charCodeAt(j) >= 0x80) {
+				error('not-basic');
+			}
+			output.push(input.charCodeAt(j));
+		}
+
+		// Main decoding loop: start just after the last delimiter if any basic code
+		// points were copied; start at the beginning otherwise.
+
+		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+			// `index` is the index of the next character to be consumed.
+			// Decode a generalized variable-length integer into `delta`,
+			// which gets added to `i`. The overflow checking is easier
+			// if we increase `i` as we go, then subtract off its starting
+			// value at the end to obtain `delta`.
+			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+				if (index >= inputLength) {
+					error('invalid-input');
+				}
+
+				digit = basicToDigit(input.charCodeAt(index++));
+
+				if (digit >= base || digit > floor((maxInt - i) / w)) {
+					error('overflow');
+				}
+
+				i += digit * w;
+				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+				if (digit < t) {
+					break;
+				}
+
+				baseMinusT = base - t;
+				if (w > floor(maxInt / baseMinusT)) {
+					error('overflow');
+				}
+
+				w *= baseMinusT;
+
+			}
+
+			out = output.length + 1;
+			bias = adapt(i - oldi, out, oldi == 0);
+
+			// `i` was supposed to wrap around from `out` to `0`,
+			// incrementing `n` each time, so we'll fix that now:
+			if (floor(i / out) > maxInt - n) {
+				error('overflow');
+			}
+
+			n += floor(i / out);
+			i %= out;
+
+			// Insert `n` at position `i` of the output
+			output.splice(i++, 0, n);
+
+		}
+
+		return ucs2encode(output);
+	}
+
+	/**
+	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+	 * Punycode string of ASCII-only symbols.
+	 * @memberOf punycode
+	 * @param {String} input The string of Unicode symbols.
+	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+	 */
+	function encode(input) {
+		var n,
+		    delta,
+		    handledCPCount,
+		    basicLength,
+		    bias,
+		    j,
+		    m,
+		    q,
+		    k,
+		    t,
+		    currentValue,
+		    output = [],
+		    /** `inputLength` will hold the number of code points in `input`. */
+		    inputLength,
+		    /** Cached calculation results */
+		    handledCPCountPlusOne,
+		    baseMinusT,
+		    qMinusT;
+
+		// Convert the input in UCS-2 to Unicode
+		input = ucs2decode(input);
+
+		// Cache the length
+		inputLength = input.length;
+
+		// Initialize the state
+		n = initialN;
+		delta = 0;
+		bias = initialBias;
+
+		// Handle the basic code points
+		for (j = 0; j < inputLength; ++j) {
+			currentValue = input[j];
+			if (currentValue < 0x80) {
+				output.push(stringFromCharCode(currentValue));
+			}
+		}
+
+		handledCPCount = basicLength = output.length;
+
+		// `handledCPCount` is the number of code points that have been handled;
+		// `basicLength` is the number of basic code points.
+
+		// Finish the basic string - if it is not empty - with a delimiter
+		if (basicLength) {
+			output.push(delimiter);
+		}
+
+		// Main encoding loop:
+		while (handledCPCount < inputLength) {
+
+			// All non-basic code points < n have been handled already. Find the next
+			// larger one:
+			for (m = maxInt, j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue >= n && currentValue < m) {
+					m = currentValue;
+				}
+			}
+
+			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+			// but guard against overflow
+			handledCPCountPlusOne = handledCPCount + 1;
+			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+				error('overflow');
+			}
+
+			delta += (m - n) * handledCPCountPlusOne;
+			n = m;
+
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+
+				if (currentValue < n && ++delta > maxInt) {
+					error('overflow');
+				}
+
+				if (currentValue == n) {
+					// Represent delta as a generalized variable-length integer
+					for (q = delta, k = base; /* no condition */; k += base) {
+						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						if (q < t) {
+							break;
+						}
+						qMinusT = q - t;
+						baseMinusT = base - t;
+						output.push(
+							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						);
+						q = floor(qMinusT / baseMinusT);
+					}
+
+					output.push(stringFromCharCode(digitToBasic(q, 0)));
+					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+					delta = 0;
+					++handledCPCount;
+				}
+			}
+
+			++delta;
+			++n;
+
+		}
+		return output.join('');
+	}
+
+	/**
+	 * Converts a Punycode string representing a domain name or an email address
+	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+	 * it doesn't matter if you call it on a string that has already been
+	 * converted to Unicode.
+	 * @memberOf punycode
+	 * @param {String} input The Punycoded domain name or email address to
+	 * convert to Unicode.
+	 * @returns {String} The Unicode representation of the given Punycode
+	 * string.
+	 */
+	function toUnicode(input) {
+		return mapDomain(input, function(string) {
+			return regexPunycode.test(string)
+				? decode(string.slice(4).toLowerCase())
+				: string;
+		});
+	}
+
+	/**
+	 * Converts a Unicode string representing a domain name or an email address to
+	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+	 * i.e. it doesn't matter if you call it with a domain that's already in
+	 * ASCII.
+	 * @memberOf punycode
+	 * @param {String} input The domain name or email address to convert, as a
+	 * Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name or
+	 * email address.
+	 */
+	function toASCII(input) {
+		return mapDomain(input, function(string) {
+			return regexNonASCII.test(string)
+				? 'xn--' + encode(string)
+				: string;
+		});
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	/** Define the public API */
+	punycode = {
+		/**
+		 * A string representing the current Punycode.js version number.
+		 * @memberOf punycode
+		 * @type String
+		 */
+		'version': '1.4.1',
+		/**
+		 * An object of methods to convert from JavaScript's internal character
+		 * representation (UCS-2) to Unicode code points, and back.
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode
+		 * @type Object
+		 */
+		'ucs2': {
+			'decode': ucs2decode,
+			'encode': ucs2encode
+		},
+		'decode': decode,
+		'encode': encode,
+		'toASCII': toASCII,
+		'toUnicode': toUnicode
+	};
+
+	/** Expose `punycode` */
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		true
+	) {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+			return punycode;
+		}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+
+}(this));
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module), __webpack_require__(/*! ./../../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
 /***/ "./node_modules/object-assign/index.js":
 /*!*********************************************!*\
   !*** ./node_modules/object-assign/index.js ***!
@@ -49775,28 +50306,11 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 "use strict";
 
 
-function parseURI (str, opts) {
-  if (!str) return undefined
-
+module.exports = function parseURI (str, opts) {
   opts = opts || {}
 
   var o = {
-    key: [
-      'source',
-      'protocol',
-      'authority',
-      'userInfo',
-      'user',
-      'password',
-      'host',
-      'port',
-      'relative',
-      'path',
-      'directory',
-      'file',
-      'query',
-      'anchor'
-    ],
+    key: ['source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port', 'relative', 'path', 'directory', 'file', 'query', 'anchor'],
     q: {
       name: 'queryKey',
       parser: /(?:^|&)([^&=]*)=?([^&]*)/g
@@ -49820,8 +50334,6 @@ function parseURI (str, opts) {
 
   return uri
 }
-
-module.exports = parseURI
 
 
 /***/ }),
@@ -53306,537 +53818,6 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-
-/***/ }),
-
-/***/ "./node_modules/punycode/punycode.js":
-/*!*******************************************!*\
-  !*** ./node_modules/punycode/punycode.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.3.2 by @mathias */
-;(function(root) {
-
-	/** Detect free variables */
-	var freeExports =  true && exports &&
-		!exports.nodeType && exports;
-	var freeModule =  true && module &&
-		!module.nodeType && module;
-	var freeGlobal = typeof global == 'object' && global;
-	if (
-		freeGlobal.global === freeGlobal ||
-		freeGlobal.window === freeGlobal ||
-		freeGlobal.self === freeGlobal
-	) {
-		root = freeGlobal;
-	}
-
-	/**
-	 * The `punycode` object.
-	 * @name punycode
-	 * @type Object
-	 */
-	var punycode,
-
-	/** Highest positive signed 32-bit float value */
-	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
-
-	/** Bootstring parameters */
-	base = 36,
-	tMin = 1,
-	tMax = 26,
-	skew = 38,
-	damp = 700,
-	initialBias = 72,
-	initialN = 128, // 0x80
-	delimiter = '-', // '\x2D'
-
-	/** Regular expressions */
-	regexPunycode = /^xn--/,
-	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
-
-	/** Error messages */
-	errors = {
-		'overflow': 'Overflow: input needs wider integers to process',
-		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
-		'invalid-input': 'Invalid input'
-	},
-
-	/** Convenience shortcuts */
-	baseMinusTMin = base - tMin,
-	floor = Math.floor,
-	stringFromCharCode = String.fromCharCode,
-
-	/** Temporary variable */
-	key;
-
-	/*--------------------------------------------------------------------------*/
-
-	/**
-	 * A generic error utility function.
-	 * @private
-	 * @param {String} type The error type.
-	 * @returns {Error} Throws a `RangeError` with the applicable error message.
-	 */
-	function error(type) {
-		throw RangeError(errors[type]);
-	}
-
-	/**
-	 * A generic `Array#map` utility function.
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} callback The function that gets called for every array
-	 * item.
-	 * @returns {Array} A new array of values returned by the callback function.
-	 */
-	function map(array, fn) {
-		var length = array.length;
-		var result = [];
-		while (length--) {
-			result[length] = fn(array[length]);
-		}
-		return result;
-	}
-
-	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings or email
-	 * addresses.
-	 * @private
-	 * @param {String} domain The domain name or email address.
-	 * @param {Function} callback The function that gets called for every
-	 * character.
-	 * @returns {Array} A new string of characters returned by the callback
-	 * function.
-	 */
-	function mapDomain(string, fn) {
-		var parts = string.split('@');
-		var result = '';
-		if (parts.length > 1) {
-			// In email addresses, only the domain name should be punycoded. Leave
-			// the local part (i.e. everything up to `@`) intact.
-			result = parts[0] + '@';
-			string = parts[1];
-		}
-		// Avoid `split(regex)` for IE8 compatibility. See #17.
-		string = string.replace(regexSeparators, '\x2E');
-		var labels = string.split('.');
-		var encoded = map(labels, fn).join('.');
-		return result + encoded;
-	}
-
-	/**
-	 * Creates an array containing the numeric code points of each Unicode
-	 * character in the string. While JavaScript uses UCS-2 internally,
-	 * this function will convert a pair of surrogate halves (each of which
-	 * UCS-2 exposes as separate characters) into a single code point,
-	 * matching UTF-16.
-	 * @see `punycode.ucs2.encode`
-	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-	 * @memberOf punycode.ucs2
-	 * @name decode
-	 * @param {String} string The Unicode input string (UCS-2).
-	 * @returns {Array} The new array of code points.
-	 */
-	function ucs2decode(string) {
-		var output = [],
-		    counter = 0,
-		    length = string.length,
-		    value,
-		    extra;
-		while (counter < length) {
-			value = string.charCodeAt(counter++);
-			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-				// high surrogate, and there is a next character
-				extra = string.charCodeAt(counter++);
-				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-				} else {
-					// unmatched surrogate; only append this code unit, in case the next
-					// code unit is the high surrogate of a surrogate pair
-					output.push(value);
-					counter--;
-				}
-			} else {
-				output.push(value);
-			}
-		}
-		return output;
-	}
-
-	/**
-	 * Creates a string based on an array of numeric code points.
-	 * @see `punycode.ucs2.decode`
-	 * @memberOf punycode.ucs2
-	 * @name encode
-	 * @param {Array} codePoints The array of numeric code points.
-	 * @returns {String} The new Unicode string (UCS-2).
-	 */
-	function ucs2encode(array) {
-		return map(array, function(value) {
-			var output = '';
-			if (value > 0xFFFF) {
-				value -= 0x10000;
-				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-				value = 0xDC00 | value & 0x3FF;
-			}
-			output += stringFromCharCode(value);
-			return output;
-		}).join('');
-	}
-
-	/**
-	 * Converts a basic code point into a digit/integer.
-	 * @see `digitToBasic()`
-	 * @private
-	 * @param {Number} codePoint The basic numeric code point value.
-	 * @returns {Number} The numeric value of a basic code point (for use in
-	 * representing integers) in the range `0` to `base - 1`, or `base` if
-	 * the code point does not represent a value.
-	 */
-	function basicToDigit(codePoint) {
-		if (codePoint - 48 < 10) {
-			return codePoint - 22;
-		}
-		if (codePoint - 65 < 26) {
-			return codePoint - 65;
-		}
-		if (codePoint - 97 < 26) {
-			return codePoint - 97;
-		}
-		return base;
-	}
-
-	/**
-	 * Converts a digit/integer into a basic code point.
-	 * @see `basicToDigit()`
-	 * @private
-	 * @param {Number} digit The numeric value of a basic code point.
-	 * @returns {Number} The basic code point whose value (when used for
-	 * representing integers) is `digit`, which needs to be in the range
-	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
-	 * used; else, the lowercase form is used. The behavior is undefined
-	 * if `flag` is non-zero and `digit` has no uppercase form.
-	 */
-	function digitToBasic(digit, flag) {
-		//  0..25 map to ASCII a..z or A..Z
-		// 26..35 map to ASCII 0..9
-		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-	}
-
-	/**
-	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * http://tools.ietf.org/html/rfc3492#section-3.4
-	 * @private
-	 */
-	function adapt(delta, numPoints, firstTime) {
-		var k = 0;
-		delta = firstTime ? floor(delta / damp) : delta >> 1;
-		delta += floor(delta / numPoints);
-		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
-			delta = floor(delta / baseMinusTMin);
-		}
-		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
-	}
-
-	/**
-	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The Punycode string of ASCII-only symbols.
-	 * @returns {String} The resulting string of Unicode symbols.
-	 */
-	function decode(input) {
-		// Don't use UCS-2
-		var output = [],
-		    inputLength = input.length,
-		    out,
-		    i = 0,
-		    n = initialN,
-		    bias = initialBias,
-		    basic,
-		    j,
-		    index,
-		    oldi,
-		    w,
-		    k,
-		    digit,
-		    t,
-		    /** Cached calculation results */
-		    baseMinusT;
-
-		// Handle the basic code points: let `basic` be the number of input code
-		// points before the last delimiter, or `0` if there is none, then copy
-		// the first basic code points to the output.
-
-		basic = input.lastIndexOf(delimiter);
-		if (basic < 0) {
-			basic = 0;
-		}
-
-		for (j = 0; j < basic; ++j) {
-			// if it's not a basic code point
-			if (input.charCodeAt(j) >= 0x80) {
-				error('not-basic');
-			}
-			output.push(input.charCodeAt(j));
-		}
-
-		// Main decoding loop: start just after the last delimiter if any basic code
-		// points were copied; start at the beginning otherwise.
-
-		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
-
-			// `index` is the index of the next character to be consumed.
-			// Decode a generalized variable-length integer into `delta`,
-			// which gets added to `i`. The overflow checking is easier
-			// if we increase `i` as we go, then subtract off its starting
-			// value at the end to obtain `delta`.
-			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
-
-				if (index >= inputLength) {
-					error('invalid-input');
-				}
-
-				digit = basicToDigit(input.charCodeAt(index++));
-
-				if (digit >= base || digit > floor((maxInt - i) / w)) {
-					error('overflow');
-				}
-
-				i += digit * w;
-				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-
-				if (digit < t) {
-					break;
-				}
-
-				baseMinusT = base - t;
-				if (w > floor(maxInt / baseMinusT)) {
-					error('overflow');
-				}
-
-				w *= baseMinusT;
-
-			}
-
-			out = output.length + 1;
-			bias = adapt(i - oldi, out, oldi == 0);
-
-			// `i` was supposed to wrap around from `out` to `0`,
-			// incrementing `n` each time, so we'll fix that now:
-			if (floor(i / out) > maxInt - n) {
-				error('overflow');
-			}
-
-			n += floor(i / out);
-			i %= out;
-
-			// Insert `n` at position `i` of the output
-			output.splice(i++, 0, n);
-
-		}
-
-		return ucs2encode(output);
-	}
-
-	/**
-	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
-	 * Punycode string of ASCII-only symbols.
-	 * @memberOf punycode
-	 * @param {String} input The string of Unicode symbols.
-	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
-	 */
-	function encode(input) {
-		var n,
-		    delta,
-		    handledCPCount,
-		    basicLength,
-		    bias,
-		    j,
-		    m,
-		    q,
-		    k,
-		    t,
-		    currentValue,
-		    output = [],
-		    /** `inputLength` will hold the number of code points in `input`. */
-		    inputLength,
-		    /** Cached calculation results */
-		    handledCPCountPlusOne,
-		    baseMinusT,
-		    qMinusT;
-
-		// Convert the input in UCS-2 to Unicode
-		input = ucs2decode(input);
-
-		// Cache the length
-		inputLength = input.length;
-
-		// Initialize the state
-		n = initialN;
-		delta = 0;
-		bias = initialBias;
-
-		// Handle the basic code points
-		for (j = 0; j < inputLength; ++j) {
-			currentValue = input[j];
-			if (currentValue < 0x80) {
-				output.push(stringFromCharCode(currentValue));
-			}
-		}
-
-		handledCPCount = basicLength = output.length;
-
-		// `handledCPCount` is the number of code points that have been handled;
-		// `basicLength` is the number of basic code points.
-
-		// Finish the basic string - if it is not empty - with a delimiter
-		if (basicLength) {
-			output.push(delimiter);
-		}
-
-		// Main encoding loop:
-		while (handledCPCount < inputLength) {
-
-			// All non-basic code points < n have been handled already. Find the next
-			// larger one:
-			for (m = maxInt, j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-				if (currentValue >= n && currentValue < m) {
-					m = currentValue;
-				}
-			}
-
-			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-			// but guard against overflow
-			handledCPCountPlusOne = handledCPCount + 1;
-			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-				error('overflow');
-			}
-
-			delta += (m - n) * handledCPCountPlusOne;
-			n = m;
-
-			for (j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-
-				if (currentValue < n && ++delta > maxInt) {
-					error('overflow');
-				}
-
-				if (currentValue == n) {
-					// Represent delta as a generalized variable-length integer
-					for (q = delta, k = base; /* no condition */; k += base) {
-						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-						if (q < t) {
-							break;
-						}
-						qMinusT = q - t;
-						baseMinusT = base - t;
-						output.push(
-							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
-						);
-						q = floor(qMinusT / baseMinusT);
-					}
-
-					output.push(stringFromCharCode(digitToBasic(q, 0)));
-					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
-					delta = 0;
-					++handledCPCount;
-				}
-			}
-
-			++delta;
-			++n;
-
-		}
-		return output.join('');
-	}
-
-	/**
-	 * Converts a Punycode string representing a domain name or an email address
-	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
-	 * it doesn't matter if you call it on a string that has already been
-	 * converted to Unicode.
-	 * @memberOf punycode
-	 * @param {String} input The Punycoded domain name or email address to
-	 * convert to Unicode.
-	 * @returns {String} The Unicode representation of the given Punycode
-	 * string.
-	 */
-	function toUnicode(input) {
-		return mapDomain(input, function(string) {
-			return regexPunycode.test(string)
-				? decode(string.slice(4).toLowerCase())
-				: string;
-		});
-	}
-
-	/**
-	 * Converts a Unicode string representing a domain name or an email address to
-	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
-	 * i.e. it doesn't matter if you call it with a domain that's already in
-	 * ASCII.
-	 * @memberOf punycode
-	 * @param {String} input The domain name or email address to convert, as a
-	 * Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name or
-	 * email address.
-	 */
-	function toASCII(input) {
-		return mapDomain(input, function(string) {
-			return regexNonASCII.test(string)
-				? 'xn--' + encode(string)
-				: string;
-		});
-	}
-
-	/*--------------------------------------------------------------------------*/
-
-	/** Define the public API */
-	punycode = {
-		/**
-		 * A string representing the current Punycode.js version number.
-		 * @memberOf punycode
-		 * @type String
-		 */
-		'version': '1.3.2',
-		/**
-		 * An object of methods to convert from JavaScript's internal character
-		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-		 * @memberOf punycode
-		 * @type Object
-		 */
-		'ucs2': {
-			'decode': ucs2decode,
-			'encode': ucs2encode
-		},
-		'decode': decode,
-		'encode': encode,
-		'toASCII': toASCII,
-		'toUnicode': toUnicode
-	};
-
-	/** Expose `punycode` */
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		true
-	) {
-		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-			return punycode;
-		}).call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {}
-
-}(this));
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module), __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -58534,7 +58515,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
 
 
 
-var punycode = __webpack_require__(/*! punycode */ "./node_modules/punycode/punycode.js");
+var punycode = __webpack_require__(/*! punycode */ "./node_modules/node-libs-browser/node_modules/punycode/punycode.js");
 var util = __webpack_require__(/*! ./util */ "./node_modules/url/util.js");
 
 exports.parse = urlParse;
@@ -59902,8 +59883,112 @@ function hide() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(PIXI) {var chart = new PIXI.Graphics().beginFill(0xffcc33, .5).drawRect(0, 0, 600, 640).endFill();
+/* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.join */ "./node_modules/core-js/modules/es.array.join.js");
+/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/slice */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/slicedToArray */ "./node_modules/@babel/runtime-corejs3/helpers/esm/slicedToArray.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/object/values */ "./node_modules/@babel/runtime-corejs3/core-js-stable/object/values.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _enum__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./enum */ "./src/module/enum.ts");
+/* harmony import */ var _wx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./wx */ "./src/module/wx/index.ts");
+
+
+
+
+
+
+
+
+var grades = _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4___default()(_enum__WEBPACK_IMPORTED_MODULE_5__["Grade"]);
+
+var chart = new PIXI.Graphics().beginFill(0xffcc33, 0).drawRect(0, 0, 600, 640).endFill();
+var lines = [];
+var rows = [];
+
+for (var i = 0; i < 8; i++) {
+  var avatar = new PIXI.Sprite(PIXI.Texture.WHITE);
+  avatar.anchor.set(0, .5);
+  var name = new PIXI.Text('', {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_5__["Color"].Black,
+    fontSize: 28
+  });
+  name.anchor.set(0, .5);
+  var duration = new PIXI.Text('', {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_5__["Color"].Gray,
+    fontSize: 24
+  });
+  duration.anchor.set(1, 0);
+  var grade = new PIXI.Text('', {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_5__["Color"].Gray,
+    fontSize: 24
+  });
+  grade.anchor.set(1, 1);
+  var line = new PIXI.Graphics().beginFill(0xcaccce).drawRect(0, 0, 600, 1).endFill();
+  line.position.set(0, (i + 1) * 80 - 1);
+  line.visible = grade.visible = name.visible = duration.visible = avatar.visible = false;
+  lines.push(line);
+  rows.push([avatar, name, grade, duration]);
+  chart.addChild(avatar, name, grade, duration, line);
+}
+
+chart.load = function () {
+  Object(_wx__WEBPACK_IMPORTED_MODULE_6__["call"])({
+    name: 'chart'
+  }).then(function (data) {
+    for (var _i = 0; _i < 8; _i++) {
+      var _context, _context2;
+
+      var _rows$_i = Object(_babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_3__["default"])(rows[_i], 4),
+          _avatar = _rows$_i[0],
+          _name = _rows$_i[1],
+          _grade = _rows$_i[2],
+          _duration = _rows$_i[3];
+
+      var item = data[_i];
+      _avatar.visible = _name.visible = _grade.visible = _duration.visible = !!item;
+      if (!item) continue;
+      var user = item.user,
+          last = item.last;
+      _avatar.texture = PIXI.Texture.from(user.avatar);
+      _avatar.width = _avatar.height = 60;
+      _name.text = user.name.length > 10 ? "".concat(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_2___default()(_context = user.name).call(_context, 0, 10), "...") : user.name;
+      _duration.text = "".concat(format(last.duration));
+      _grade.text = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context2 = "".concat(grades[last.grade], ": \u7B2C")).call(_context2, last.index + 1, "\u5173");
+      _name.x = 70;
+      _grade.x = _duration.x = 600;
+      _avatar.y = _name.y = 40 + _i * 80;
+      _grade.y = _name.y - 4;
+      _duration.y = _name.y + 4;
+      lines[_i].visible = _avatar.visible = _name.visible = _grade.visible = _duration.visible = true;
+    }
+  });
+};
+
 /* harmony default export */ __webpack_exports__["default"] = (chart);
+
+function format(i) {
+  var h = 0,
+      m = 0;
+  var queue = [];
+
+  if (i > 59) {
+    m = i / 60 | 0;
+    i -= m * 60;
+  }
+
+  if (m > 59) {
+    h = m / 60 | 0;
+    m -= h * 60;
+  }
+
+  if (h) queue.push(h, 'h');
+  if (m) queue.push(m, 'm');
+  if (i) queue.push(i, 's');
+  return queue.length ? queue.join(' ') : '0 s';
+}
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
 /***/ }),
@@ -60047,6 +60132,7 @@ grid.on('pointerdown', function (e) {
 grid.init = function (opt) {
   var size = opt.size;
   this.clear().lineStyle(4, _enum__WEBPACK_IMPORTED_MODULE_16__["Color"].Black, 1, 1).beginFill(_enum__WEBPACK_IMPORTED_MODULE_16__["Color"].White).drawRect(0, 0, size * 9, size * 9).endFill();
+  this.data = opt.data;
 
   for (var i = 0; i < 81; i++) {
     var x = i % 9;
@@ -60120,22 +60206,14 @@ grid.refresh = /*#__PURE__*/function () {
                           var cell = _step2.value;
                           cell.empty();
                           var anime = Object(popmotion__WEBPACK_IMPORTED_MODULE_20__["tween"])({
-                            from: {
-                              r: .2,
-                              g: .2,
-                              b: .2
-                            },
-                            to: {
-                              r: 1,
-                              g: 1,
-                              b: 1
-                            },
+                            from: .6,
+                            to: 1,
                             duration: 2e2,
-                            ease: popmotion__WEBPACK_IMPORTED_MODULE_20__["easing"].easeOut
+                            ease: popmotion__WEBPACK_IMPORTED_MODULE_20__["easing"].easeIn
                           }).start({
                             update: function update(v) {
                               anime.getProgress() > .5 && resolve();
-                              cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0;
+                              cell.tint = (v * 255 << 16) + (v * 255 << 8) + v * 255;
                             },
                             complete: function complete() {
                               var num = +opt.data[0][cell.index];
@@ -60242,7 +60320,8 @@ grid.tip = function () {
   _util__WEBPACK_IMPORTED_MODULE_19__["store"].tip.count--;
   selected.value = +this.data[1][selected.index];
   _sound__WEBPACK_IMPORTED_MODULE_18__["play"]('hint.mp3');
-  if (this.check()) grid.emit('done');
+  if (this.check()) return grid.emit('done');
+  save();
 };
 /** 恢复填写记录 */
 
@@ -60507,7 +60586,7 @@ function format(i) {
 /*!*****************************!*\
   !*** ./src/module/index.ts ***!
   \*****************************/
-/*! exports provided: Mode, Color, Grade, sound, btnBack, grid, head, chart, numpad, toolbar */
+/*! exports provided: Mode, Color, Grade, sound, btnBack, grid, head, chart, numpad, toolbar, particle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -60537,6 +60616,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _toolbar__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./toolbar */ "./src/module/toolbar.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "toolbar", function() { return _toolbar__WEBPACK_IMPORTED_MODULE_7__["default"]; });
+
+/* harmony import */ var _particle__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./particle */ "./src/module/particle.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "particle", function() { return _particle__WEBPACK_IMPORTED_MODULE_8__["default"]; });
+
 
 
 
@@ -60591,6 +60674,124 @@ numpad.init = function () {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (numpad);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
+
+/***/ }),
+
+/***/ "./src/module/particle.ts":
+/*!********************************!*\
+  !*** ./src/module/particle.ts ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/is-array */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/is-array.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js/get-iterator-method */ "./node_modules/@babel/runtime-corejs3/core-js/get-iterator-method.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/symbol */ "./node_modules/@babel/runtime-corejs3/core-js-stable/symbol.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/array/from */ "./node_modules/@babel/runtime-corejs3/core-js-stable/array/from.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/slice */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
+
+
+
+
+
+
+
+
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_5___default.a === "undefined" || _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_4___default()(o) == null) { if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_3___default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2___default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { var _context; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_7___default()(_context = Object.prototype.toString.call(o)).call(_context, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_6___default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
+var random = Math.random;
+var container = new PIXI.ParticleContainer(1e3, {
+  vertices: true,
+  position: true,
+  tint: true,
+  rotation: true,
+  uvs: true
+});
+var stars = [];
+var falling = false;
+
+container.init = function () {
+  var _this = this;
+
+  for (var i = 0; i < 80; i++) {
+    var star = PIXI.Sprite.from('star.png');
+    star.a = star.v = 0;
+    stars.push(star);
+    container.addChild(star);
+  }
+
+  _core__WEBPACK_IMPORTED_MODULE_8__["ticker"].add(function () {
+    if (!falling) return _this.visible = false;
+    var done = true;
+
+    var _iterator = _createForOfIteratorHelper(stars),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var _star = _step.value;
+        _star.v += _star.a;
+        _star.y += _star.v;
+        if (_star.y < _core__WEBPACK_IMPORTED_MODULE_8__["screen"].height) done = false;
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    if (done) falling = false;
+  });
+};
+
+container.start = function () {
+  if (falling) return;
+  falling = true;
+  this.visible = true;
+
+  var _iterator2 = _createForOfIteratorHelper(stars),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var star = _step2.value;
+      star.alpha = 1;
+      star.x = _core__WEBPACK_IMPORTED_MODULE_8__["screen"].width * random();
+      star.y = -128;
+      star.a = .1 + random() * .5;
+      star.tint = random() * 0xffffff;
+      star.scale.set(.2 + .5 * random());
+      star.v = random() * 3;
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (container);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))
 
 /***/ }),
@@ -60671,6 +60872,7 @@ toolbar.init = function () {
     var name = e.target.name;
 
     if (name === 'pencil') {
+      mode ^= 1;
       e.target.tint = mode ? _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue : _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray;
     }
 
@@ -60703,7 +60905,7 @@ toolbar.refresh = function (opt) {
   badge.text = "".concat(opt.count);
   if (opt.mode == null) return;
   mode = opt.mode;
-  void (this.children[1].tint = mode ? _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray : _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue);
+  void (this.children[1].tint = mode ? _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue : _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (toolbar);
@@ -60992,7 +61194,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_values__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
 /* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+/* harmony import */ var _module_wx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/module/wx */ "./src/module/wx/index.ts");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+
 
 
 
@@ -61028,9 +61232,20 @@ function init() {
               var tapIndex = _ref.tapIndex;
               _core__WEBPACK_IMPORTED_MODULE_5__["monitor"].emit('scene:go', 'game', {
                 grade: tapIndex,
-                index: ((_store$last = _util__WEBPACK_IMPORTED_MODULE_7__["store"].last) === null || _store$last === void 0 ? void 0 : _store$last.index) || 0
+                index: ((_store$last = _util__WEBPACK_IMPORTED_MODULE_8__["store"].last) === null || _store$last === void 0 ? void 0 : _store$last.index) || 0
               });
             }
+          });
+          Object(_module_wx__WEBPACK_IMPORTED_MODULE_7__["getUserInfo"])().then(function (_ref2) {
+            var userInfo = _ref2.userInfo;
+            var user = _util__WEBPACK_IMPORTED_MODULE_8__["store"].user;
+            user.name = userInfo.nickName;
+            user.name = userInfo.nickName;
+            user.avatar = userInfo.avatarUrl;
+            user.city = userInfo.city;
+            user.country = userInfo.country;
+            user.gender = userInfo.gender;
+            user.province = userInfo.province;
           });
           break;
         }
@@ -61055,9 +61270,14 @@ function init() {
     layout.addChild(btn);
   });
 
+  _module__WEBPACK_IMPORTED_MODULE_6__["chart"].load();
   _module__WEBPACK_IMPORTED_MODULE_6__["chart"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_6__["chart"].width / 2, 0);
   _module__WEBPACK_IMPORTED_MODULE_6__["chart"].position.set(width / 2, 0);
   layout.addChild(_module__WEBPACK_IMPORTED_MODULE_6__["chart"]);
+  void function loop() {
+    if (container.visible) _module__WEBPACK_IMPORTED_MODULE_6__["chart"].load();
+    Object(_util__WEBPACK_IMPORTED_MODULE_8__["delay"])(10).then(loop);
+  }();
   layout.pivot.set(width / 2, height / 2);
   layout.position.set(_core__WEBPACK_IMPORTED_MODULE_5__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_5__["screen"].height / 2);
   layout.scale.set(window.zoom);
@@ -61069,7 +61289,7 @@ function init() {
 function refresh() {
   var _context4;
 
-  if (_util__WEBPACK_IMPORTED_MODULE_7__["store"].last) {
+  if (_util__WEBPACK_IMPORTED_MODULE_8__["store"].last) {
     _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(btns).call(btns, function (btn, i) {
       btn.visible = true;
 
@@ -61098,7 +61318,7 @@ function refresh() {
 
           item.visible = true;
           item.alpha = i ? .8 : 1;
-          item.text = i ? _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.duration), " - ")).call(_context3, grades[_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade]) : '继续游戏';
+          item.text = i ? _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = "\u7528\u65F6: ".concat(format(_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.duration), " - ")).call(_context3, grades[_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade]) : '继续游戏';
           item.style.fill = _module__WEBPACK_IMPORTED_MODULE_6__["Color"].White;
           item.style.fontSize = i ? 24 : 28;
           item.anchor.set(.5, i ? 1 : 0);
@@ -61179,10 +61399,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
-/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
-/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
-/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/level */ "./level/index.ts");
+/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/level */ "./level/index.ts");
+/* harmony import */ var _module_wx__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/module/wx */ "./src/module/wx/index.ts");
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
+
 
 
 
@@ -61194,7 +61416,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var min = Math.min;
-var mode = _module__WEBPACK_IMPORTED_MODULE_7__["Mode"].Pen;
+var mode = _module__WEBPACK_IMPORTED_MODULE_10__["Mode"].Pen;
 var container;
 
 function init() {
@@ -61216,88 +61438,99 @@ function _init() {
           case 2:
             rect = _context5.sent;
             container = new PIXI.Container();
-            _module__WEBPACK_IMPORTED_MODULE_7__["head"].init({
+            _module__WEBPACK_IMPORTED_MODULE_10__["head"].init({
               width: 720,
               height: 60,
               duration: 0,
-              grade: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade,
-              index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default()(_context2 = "".concat(_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.index + 1, " / ")).call(_context2, _level__WEBPACK_IMPORTED_MODULE_9__["default"][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade].length)
+              grade: _util__WEBPACK_IMPORTED_MODULE_9__["store"].last.grade,
+              index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default()(_context2 = "".concat(_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.index + 1, " / ")).call(_context2, _level__WEBPACK_IMPORTED_MODULE_6__["default"][_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.grade].length)
             });
-            _module__WEBPACK_IMPORTED_MODULE_7__["head"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_7__["head"].width / 2, 0);
-            _module__WEBPACK_IMPORTED_MODULE_7__["head"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_6__["pixelRatio"]);
-            _module__WEBPACK_IMPORTED_MODULE_7__["head"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].init({
-              size: 80
+            _module__WEBPACK_IMPORTED_MODULE_10__["head"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_10__["head"].width / 2, 0);
+            _module__WEBPACK_IMPORTED_MODULE_10__["head"].position.set(_core__WEBPACK_IMPORTED_MODULE_8__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_8__["pixelRatio"]);
+            _module__WEBPACK_IMPORTED_MODULE_10__["head"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_10__["grid"].init({
+              size: 80,
+              data: _level__WEBPACK_IMPORTED_MODULE_6__["default"][_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.index]
             });
-            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].pivot.set(360, 0);
-            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_7__["head"].y + _module__WEBPACK_IMPORTED_MODULE_7__["head"].height + 20);
-            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].on('done', function () {
-              _module__WEBPACK_IMPORTED_MODULE_7__["sound"].play('win.mp3');
+            _module__WEBPACK_IMPORTED_MODULE_10__["grid"].pivot.set(360, 0);
+            _module__WEBPACK_IMPORTED_MODULE_10__["grid"].position.set(_core__WEBPACK_IMPORTED_MODULE_8__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_10__["head"].y + _module__WEBPACK_IMPORTED_MODULE_10__["head"].height + 20);
+            _module__WEBPACK_IMPORTED_MODULE_10__["grid"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_10__["grid"].on('done', function () {
+              _module__WEBPACK_IMPORTED_MODULE_10__["sound"].play('win.mp3');
               next();
             });
-            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].init();
-            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].pivot.set(360, 0);
-            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_7__["grid"].y + _module__WEBPACK_IMPORTED_MODULE_7__["grid"].height + 20);
-            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].on('output', _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = _module__WEBPACK_IMPORTED_MODULE_7__["grid"].input).call(_context3, _module__WEBPACK_IMPORTED_MODULE_7__["grid"]));
-            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].init();
-            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].pivot.set(360, 64);
-            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_6__["screen"].height - 20);
-            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].on('output', function (v) {
+            _module__WEBPACK_IMPORTED_MODULE_10__["numpad"].init();
+            _module__WEBPACK_IMPORTED_MODULE_10__["numpad"].pivot.set(360, 0);
+            _module__WEBPACK_IMPORTED_MODULE_10__["numpad"].position.set(_core__WEBPACK_IMPORTED_MODULE_8__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_10__["grid"].y + _module__WEBPACK_IMPORTED_MODULE_10__["grid"].height + 20);
+            _module__WEBPACK_IMPORTED_MODULE_10__["numpad"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_10__["numpad"].on('output', _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = _module__WEBPACK_IMPORTED_MODULE_10__["grid"].input).call(_context3, _module__WEBPACK_IMPORTED_MODULE_10__["grid"]));
+            _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].init();
+            _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].pivot.set(360, 64);
+            _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].position.set(_core__WEBPACK_IMPORTED_MODULE_8__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_8__["screen"].height - 20);
+            _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].on('output', function (v) {
               switch (v) {
                 case 'eraser':
                   {
-                    _module__WEBPACK_IMPORTED_MODULE_7__["grid"].erase();
+                    _module__WEBPACK_IMPORTED_MODULE_10__["grid"].erase();
                     break;
                   }
 
                 case 'pencil':
                   {
                     mode ^= 1;
-                    _module__WEBPACK_IMPORTED_MODULE_7__["grid"].switch(mode);
+                    _module__WEBPACK_IMPORTED_MODULE_10__["grid"].switch(mode);
                     break;
                   }
 
                 case 'tip':
                   {
-                    if (_util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count > 0) {
-                      _module__WEBPACK_IMPORTED_MODULE_7__["grid"].tip();
-                      _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].refresh({
-                        count: _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count
+                    if (_util__WEBPACK_IMPORTED_MODULE_9__["store"].tip.count > 0) {
+                      _module__WEBPACK_IMPORTED_MODULE_10__["grid"].tip();
+                      _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].refresh({
+                        count: _util__WEBPACK_IMPORTED_MODULE_9__["store"].tip.count
                       });
                     } else {
                       wx.showModal({
                         title: '获取提示',
                         content: '观看视频广告获取3次提示机会',
                         success: function () {
-                          var _success = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee() {
-                            var ok;
+                          var _success = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee(_ref) {
+                            var confirm, ok;
                             return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context4) {
                               while (1) {
                                 switch (_context4.prev = _context4.next) {
                                   case 0:
-                                    _context4.next = 2;
-                                    return showVideoAd();
+                                    confirm = _ref.confirm;
 
-                                  case 2:
-                                    ok = _context4.sent;
-
-                                    if (ok) {
-                                      _context4.next = 5;
+                                    if (confirm) {
+                                      _context4.next = 3;
                                       break;
                                     }
 
                                     return _context4.abrupt("return");
 
+                                  case 3:
+                                    _context4.next = 5;
+                                    return showVideoAd();
+
                                   case 5:
-                                    _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count += 3;
-                                    _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].refresh({
-                                      count: _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count
+                                    ok = _context4.sent;
+
+                                    if (ok) {
+                                      _context4.next = 8;
+                                      break;
+                                    }
+
+                                    return _context4.abrupt("return");
+
+                                  case 8:
+                                    _util__WEBPACK_IMPORTED_MODULE_9__["store"].tip.count += 3;
+                                    _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].refresh({
+                                      count: _util__WEBPACK_IMPORTED_MODULE_9__["store"].tip.count
                                     });
 
-                                  case 7:
+                                  case 10:
                                   case "end":
                                     return _context4.stop();
                                 }
@@ -61305,7 +61538,7 @@ function _init() {
                             }, _callee);
                           }));
 
-                          function success() {
+                          function success(_x) {
                             return _success.apply(this, arguments);
                           }
 
@@ -61318,11 +61551,13 @@ function _init() {
                   }
               }
             });
+            _module__WEBPACK_IMPORTED_MODULE_10__["particle"].visible = false;
+            _module__WEBPACK_IMPORTED_MODULE_10__["particle"].init();
             refresh();
-            container.addChild(_module__WEBPACK_IMPORTED_MODULE_7__["head"], _module__WEBPACK_IMPORTED_MODULE_7__["grid"], _module__WEBPACK_IMPORTED_MODULE_7__["numpad"], _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"]);
-            _core__WEBPACK_IMPORTED_MODULE_6__["stage"].addChild(container);
+            container.addChild(_module__WEBPACK_IMPORTED_MODULE_10__["head"], _module__WEBPACK_IMPORTED_MODULE_10__["grid"], _module__WEBPACK_IMPORTED_MODULE_10__["numpad"], _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"], _module__WEBPACK_IMPORTED_MODULE_10__["particle"]);
+            _core__WEBPACK_IMPORTED_MODULE_8__["stage"].addChild(container);
 
-          case 26:
+          case 28:
           case "end":
             return _context5.stop();
         }
@@ -61335,37 +61570,74 @@ function _init() {
 function refresh() {
   var _context;
 
-  _module__WEBPACK_IMPORTED_MODULE_7__["head"].refresh({
-    grade: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade,
-    duration: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.duration,
-    index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default()(_context = "".concat(_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.index + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_9__["default"][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade].length)
+  _module__WEBPACK_IMPORTED_MODULE_10__["head"].refresh({
+    grade: _util__WEBPACK_IMPORTED_MODULE_9__["store"].last.grade,
+    duration: _util__WEBPACK_IMPORTED_MODULE_9__["store"].last.duration,
+    index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default()(_context = "".concat(_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.index + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_6__["default"][_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.grade].length)
   });
-  _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].refresh({
-    count: _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count,
+  _module__WEBPACK_IMPORTED_MODULE_10__["toolbar"].refresh({
+    count: _util__WEBPACK_IMPORTED_MODULE_9__["store"].tip.count,
     mode: mode
   });
-  _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.cells ? _module__WEBPACK_IMPORTED_MODULE_7__["grid"].restore({
-    data: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.cells,
+  _util__WEBPACK_IMPORTED_MODULE_9__["store"].last.cells ? _module__WEBPACK_IMPORTED_MODULE_10__["grid"].restore({
+    data: _util__WEBPACK_IMPORTED_MODULE_9__["store"].last.cells,
     mode: mode
-  }) : _module__WEBPACK_IMPORTED_MODULE_7__["grid"].refresh({
-    data: _level__WEBPACK_IMPORTED_MODULE_9__["default"][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.index],
+  }) : _module__WEBPACK_IMPORTED_MODULE_10__["grid"].refresh({
+    data: _level__WEBPACK_IMPORTED_MODULE_6__["default"][_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_9__["store"].last.index],
     mode: mode
   });
 }
 
 function next() {
-  var last = _util__WEBPACK_IMPORTED_MODULE_8__["store"].last;
+  return _next.apply(this, arguments);
+}
 
-  if (++last.index === _level__WEBPACK_IMPORTED_MODULE_9__["default"][last.grade].length) {
-    last.index--;
-    wx.showToast({
-      title: '当前难度已通关',
-      icon: 'none'
-    });
-  }
+function _next() {
+  _next = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3() {
+    var last;
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            last = _util__WEBPACK_IMPORTED_MODULE_9__["store"].last;
+            Object(_module_wx__WEBPACK_IMPORTED_MODULE_7__["call"])({
+              name: 'user',
+              data: {
+                type: 'set',
+                user: _util__WEBPACK_IMPORTED_MODULE_9__["store"].user,
+                last: {
+                  grade: last.grade,
+                  index: last.index,
+                  duration: last.duration
+                }
+              }
+            });
 
-  last.duration = 0;
-  refresh();
+            if (++last.index === _level__WEBPACK_IMPORTED_MODULE_6__["default"][last.grade].length) {
+              last.index--;
+              wx.showToast({
+                title: '当前难度已通关',
+                icon: 'none'
+              });
+            }
+
+            last.cells = null;
+            last.duration = 0;
+            _module__WEBPACK_IMPORTED_MODULE_10__["particle"].start();
+            _context6.next = 8;
+            return Object(_util__WEBPACK_IMPORTED_MODULE_9__["delay"])(1);
+
+          case 8:
+            refresh();
+
+          case 9:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee3);
+  }));
+  return _next.apply(this, arguments);
 }
 
 function showVideoAd() {
@@ -61373,16 +61645,16 @@ function showVideoAd() {
 }
 
 function _showVideoAd() {
-  _showVideoAd = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3() {
+  _showVideoAd = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee4() {
     var _window, videoAd, _createPromise, _createPromise2, promise, resolve, ok, fn;
 
-    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context6) {
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee4$(_context7) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context7.prev = _context7.next) {
           case 0:
             _window = window, videoAd = _window.videoAd;
-            _createPromise = Object(_util__WEBPACK_IMPORTED_MODULE_8__["createPromise"])(), _createPromise2 = Object(_babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_createPromise, 2), promise = _createPromise2[0], resolve = _createPromise2[1];
-            _context6.next = 4;
+            _createPromise = Object(_util__WEBPACK_IMPORTED_MODULE_9__["createPromise"])(), _createPromise2 = Object(_babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_createPromise, 2), promise = _createPromise2[0], resolve = _createPromise2[1];
+            _context7.next = 4;
             return videoAd.show().then(function () {
               return true;
             }).catch(function () {
@@ -61390,7 +61662,7 @@ function _showVideoAd() {
             });
 
           case 4:
-            ok = _context6.sent;
+            ok = _context7.sent;
 
             if (ok) {
               fn = function fn(info) {
@@ -61407,32 +61679,32 @@ function _showVideoAd() {
               });
             }
 
-            return _context6.abrupt("return", promise);
+            return _context7.abrupt("return", promise);
 
           case 7:
           case "end":
-            return _context6.stop();
+            return _context7.stop();
         }
       }
-    }, _callee3);
+    }, _callee4);
   }));
   return _showVideoAd.apply(this, arguments);
 }
 
 function show(opt) {
-  opt && (_util__WEBPACK_IMPORTED_MODULE_8__["store"].last = {
+  opt && (_util__WEBPACK_IMPORTED_MODULE_9__["store"].last = {
     grade: opt.grade,
     index: opt.index,
     duration: 0,
     cells: null
   });
-  _module__WEBPACK_IMPORTED_MODULE_7__["btnBack"].show();
+  _module__WEBPACK_IMPORTED_MODULE_10__["btnBack"].show();
   if (!container) return init();
   container.visible = true;
   refresh();
 }
 function hide() {
-  _module__WEBPACK_IMPORTED_MODULE_7__["btnBack"].hide();
+  _module__WEBPACK_IMPORTED_MODULE_10__["btnBack"].hide();
   container.visible = false;
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))

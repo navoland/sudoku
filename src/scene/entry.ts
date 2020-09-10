@@ -1,6 +1,7 @@
 import {stage, screen, monitor} from '~/core'
 import {chart, Color, Grade} from '~/module'
-import {store} from '~/util'
+import {getUserInfo} from '~/module/wx'
+import {store, delay} from '~/util'
 
 const width = 600
 const height = chart.height + 260
@@ -29,6 +30,16 @@ function init() {
             })
           }
         })
+        getUserInfo().then(({userInfo}) => {
+          const {user} = store
+          user.name = userInfo.nickName
+          user.name = userInfo.nickName
+          user.avatar = userInfo.avatarUrl
+          user.city = userInfo.city
+          user.country = userInfo.country
+          user.gender = userInfo.gender
+          user.province = userInfo.province
+        })
         break
       }
 
@@ -55,9 +66,15 @@ function init() {
     layout.addChild(btn)
   })
 
+  chart.load()
   chart.pivot.set(chart.width / 2, 0)
   chart.position.set(width / 2, 0)
   layout.addChild(chart)
+
+  void function loop() {
+    if (container.visible) chart.load()
+    delay(10).then(loop)
+  }()
 
 
   layout.pivot.set(width / 2, height / 2)

@@ -35,6 +35,8 @@ grid.init = function(opt) {
     .drawRect(0, 0, size * 9, size * 9)
     .endFill()
 
+  this.data = opt.data
+
   for (let i = 0; i < 81; i++) {
     const x = i % 9
     const y = i / 9 | 0
@@ -88,14 +90,14 @@ grid.refresh = async function(opt) {
     for (const cell of row) {
       cell.empty()
       const anime = tween({
-        from: {r: .2, g: .2, b: .2},
-        to: {r: 1, g: 1, b: 1},
+        from: .6,
+        to: 1,
         duration: 2e2,
-        ease: easing.easeOut
+        ease: easing.easeIn
       }).start({
-        update: (v: any) => {
+        update: (v: number) => {
           anime.getProgress() > .5 && resolve()
-          cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0
+          cell.tint = (v * 255 << 16) + (v * 255 << 8) + v * 255
         },
         complete: () => {
           const num = +opt.data[0][cell.index]
@@ -136,7 +138,8 @@ grid.tip = function() {
   store.tip.count--
   selected.value = +this.data[1][selected.index]
   sound.play('hint.mp3')
-  if (this.check()) grid.emit('done')
+  if (this.check()) return grid.emit('done')
+  save()
 }
 
 /** 恢复填写记录 */
@@ -206,6 +209,7 @@ function unhighlight() {
 interface IOption {
   // 方格尺寸
   size: number
+  data: ILevelData
 }
 
 interface Grid extends PIXI.Graphics {
