@@ -48,3 +48,14 @@ preload().then(() => {
 // 设计尺寸
 window.design = {width: 750, height: 1334}
 window.zoom = min(screen.width / window.design.width, screen.height / window.design.height)
+
+wx.showShareMenu({
+  menus: ['shareAppMessage', 'shareTimeline']
+})
+
+wx.onShareAppMessage(() => {
+  return {
+    title: '数独物语',
+    imageUrl: 'cloud://colloc-dev.636f-colloc-dev-1258618978/image/snapshot.png'
+  }
+})

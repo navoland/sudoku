@@ -32,7 +32,6 @@
     "dayjs": "^1.8.35",
     "eslint": "^7.8.1",
     "eslint-loader": "^4.0.2",
-    "howler": "^2.2.0",
     "pixi.js": "^5.3.3",
     "popmotion": "^8.7.5",
     "progress-bar-webpack-plugin": "^2.1.0",

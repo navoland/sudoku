@@ -1,5 +1,5 @@
 import {stage, screen, monitor} from '~/core'
-import {chart, Color, Grade} from '~/module'
+import {chart, Color, Grade, sound} from '~/module'
 import {getUserInfo} from '~/module/wx'
 import {store, delay} from '~/util'
 
@@ -21,6 +21,7 @@ function init() {
   layout.on('pointerdown', (e: IEvent) => {
     switch (e.target?.name) {
       case 'btn:new': {
+        sound.play('tap.mp3')
         wx.showActionSheet({
           itemList: grades,
           success: ({tapIndex}) => {
@@ -44,6 +45,7 @@ function init() {
       }
 
       case 'btn:restore': {
+        sound.play('tap.mp3')
         monitor.emit('scene:go', 'game')
         break
       }

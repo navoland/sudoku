@@ -1,4 +1,3 @@
-import {delay} from '~/util'
 import {Color, Grade} from './enum'
 import {call} from './wx'
 
