@@ -10,7 +10,8 @@ let store = {
   last: null as {
     grade: number
     index: number
-    duration: number
+    duration: number,
+    cells: {preset: number, items: number[], value: number}[]
   },
 
   setting: {voice: 1},

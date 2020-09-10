@@ -13,6 +13,7 @@ async function init() {
   head.init({
     width: 720,
     height: 60,
+    duration: 0,
     grade: store.last.grade,
     index: `${store.last.index + 1} / ${levels[store.last.grade].length}`
   })
@@ -25,10 +26,10 @@ async function init() {
   })
   grid.pivot.set(360, 0)
   grid.position.set(screen.width / 2, head.y + head.height + 20)
-  grid.refresh({data: levels[store.last.grade][store.last.index] as ILevelData})
   grid.scale.set(window.zoom)
   grid.on('done', () => {
     sound.play('win.mp3')
+    next()
   })
 
   numpad.init()
@@ -96,6 +97,7 @@ async function init() {
     }
   })
 
+  refresh()
   container.addChild(head, grid, numpad, toolbar)
   stage.addChild(container)
 }
@@ -103,18 +105,30 @@ async function init() {
 function refresh() {
   head.refresh({
     grade: store.last.grade,
+    duration: store.last.duration,
     index: `${store.last.index + 1} / ${levels[store.last.grade].length}`
   })
-  grid.refresh({
-    data: levels[store.last.grade][store.last.index] as ILevelData
-  })
+  store.last.cells ?
+    grid.restore(store.last.cells) :
+    grid.refresh(levels[store.last.grade][store.last.index] as ILevelData)
+}
+
+function next() {
+  const {last} = store
+  if (++last.index === levels[last.grade].length) {
+    last.index--
+    wx.showToast({title: '当前难度已通关', icon: 'none'})
+  }
+  last.duration = 0
+  refresh()
 }
 
 export function show(opt: {grade: number, index: number}) {
   opt && (store.last = {
     grade: opt.grade,
     index: opt.index,
-    duration: 0
+    duration: 0,
+    cells: null
   })
   btnBack.show()
   if (!container) return init()

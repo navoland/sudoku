@@ -18,7 +18,7 @@ head.init = function(opt) {
   grade.anchor.set(0, .5)
   grade.position.set(0, height / 2)
 
-  const progress = new PIXI.Text(`进度: ${opt.index}`, {
+  const progress = new PIXI.Text(`关卡: ${opt.index}`, {
     fill: Color.Gray,
     fontSize: 26,
   })
@@ -51,12 +51,12 @@ head.refresh = function(opt) {
       }
 
       case 1: {
-        child.text = `进度: ${opt.index}`
+        child.text = `关卡: ${opt.index}`
         break
       }
 
       case 2: {
-        child.text = `用时: ${format(store.last.duration)}`
+        child.text = `用时: ${format(opt.duration)}`
         break
       }
     }
@@ -68,6 +68,7 @@ interface IOption {
   height: number
   grade: number
   index: string
+  duration: number
 }
 
 interface Head extends PIXI.Graphics {

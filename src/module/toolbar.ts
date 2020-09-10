@@ -44,11 +44,12 @@ toolbar.init = function() {
 
 toolbar.refresh = function() {
   badge.text = `${store.tip.count}`
+  void ((this.children[1] as PIXI.Sprite).tint = Color.Gray)
 }
 
 interface Toolbar extends PIXI.Graphics {
   init?(this: Toolbar): void
-  refresh?(): void
+  refresh?(this: Toolbar): void
 }
 
 export default toolbar

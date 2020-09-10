@@ -62,6 +62,7 @@ export default class extends PIXI.Graphics {
     this._num.visible = true
     this._num.text = `${v}`
     this._num.style.fill = Color.Black
+    for (const item of this._items) item.visible = false
   }
 
   select() {
@@ -90,6 +91,12 @@ export default class extends PIXI.Graphics {
       .endFill()
   }
 
+  empty() {
+    this.selectable = true
+    this.erase()
+    this.unhighlight()
+  }
+
   get value() {
     return this._num.visible && +this._num.text
   }
@@ -100,6 +107,12 @@ export default class extends PIXI.Graphics {
     if (this._num.visible) return
     this._num.visible = true
     for (const item of this._items) item.visible = false
+  }
+
+  get items() {
+    return this._items
+      .filter(item => item.visible)
+      .map(item => +item.text)
   }
 }
 
