@@ -61391,6 +61391,7 @@ function refresh() {
     duration: _util__WEBPACK_IMPORTED_MODULE_7__["store"].last.duration,
     index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default()(_context = "".concat(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.index + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_8__["default"][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade].length)
   });
+  _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].refresh();
   _util__WEBPACK_IMPORTED_MODULE_7__["store"].last.cells ? _module__WEBPACK_IMPORTED_MODULE_6__["grid"].restore(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.cells) : _module__WEBPACK_IMPORTED_MODULE_6__["grid"].refresh(_level__WEBPACK_IMPORTED_MODULE_8__["default"][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.index]);
 }
 

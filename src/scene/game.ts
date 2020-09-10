@@ -108,6 +108,7 @@ function refresh() {
     duration: store.last.duration,
     index: `${store.last.index + 1} / ${levels[store.last.grade].length}`
   })
+  toolbar.refresh()
   store.last.cells ?
     grid.restore(store.last.cells) :
     grid.refresh(levels[store.last.grade][store.last.index] as ILevelData)
