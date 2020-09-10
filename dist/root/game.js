@@ -60093,15 +60093,15 @@ grid.init = function (opt) {
 };
 
 grid.refresh = /*#__PURE__*/function () {
-  var _ref = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_15__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_12___default.a.mark(function _callee(data) {
+  var _ref = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_15__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_12___default.a.mark(function _callee(opt) {
     var _iterator, _step, _loop;
 
     return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_12___default.a.wrap(function _callee$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            this.data = data;
-            mode = _enum__WEBPACK_IMPORTED_MODULE_16__["Mode"].Pen;
+            this.data = opt.data;
+            mode = opt.mode;
             _iterator = _createForOfIteratorHelper(rows);
             _context2.prev = 3;
             _loop = /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_12___default.a.mark(function _loop() {
@@ -60138,7 +60138,7 @@ grid.refresh = /*#__PURE__*/function () {
                               cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0;
                             },
                             complete: function complete() {
-                              var num = +data[0][cell.index];
+                              var num = +opt.data[0][cell.index];
                               num && cell.preset(num);
                             }
                           });
@@ -60208,8 +60208,8 @@ grid.refresh = /*#__PURE__*/function () {
   };
 }();
 
-grid.switch = function () {
-  mode = mode === _enum__WEBPACK_IMPORTED_MODULE_16__["Mode"].Pen ? _enum__WEBPACK_IMPORTED_MODULE_16__["Mode"].Pencil : _enum__WEBPACK_IMPORTED_MODULE_16__["Mode"].Pen;
+grid.switch = function (v) {
+  mode = v;
   _sound__WEBPACK_IMPORTED_MODULE_18__["play"]("".concat(mode === _enum__WEBPACK_IMPORTED_MODULE_16__["Mode"].Pen ? 'pen' : 'pencil', ".mp3"));
 };
 
@@ -60247,12 +60247,12 @@ grid.tip = function () {
 /** 恢复填写记录 */
 
 
-grid.restore = function (data) {
-  mode = _enum__WEBPACK_IMPORTED_MODULE_16__["Mode"].Pen;
+grid.restore = function (opt) {
+  mode = opt.mode;
 
   for (var i = 0; i < 81; i++) {
     var cell = cells[i];
-    var item = data[i];
+    var item = opt.data[i];
     cell.empty();
 
     if (item.preset) {
@@ -60657,12 +60657,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var toolbar = new PIXI.Graphics();
-var badge = new PIXI.Text("".concat(_util__WEBPACK_IMPORTED_MODULE_1__["store"].tip.count), {
-  fill: _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue,
-  fontSize: 48,
-  fontWeight: 'bold'
-});
-badge.anchor.set(.5, 0);
+var badge;
+var mode;
 
 toolbar.init = function () {
   var _this = this,
@@ -60675,11 +60671,17 @@ toolbar.init = function () {
     var name = e.target.name;
 
     if (name === 'pencil') {
-      e.target.tint = e.target.tint === _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue ? _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray : _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue;
+      e.target.tint = mode ? _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue : _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray;
     }
 
     _this.emit('output', e.target.name);
   });
+  badge = new PIXI.Text("".concat(_util__WEBPACK_IMPORTED_MODULE_1__["store"].tip.count), {
+    fill: _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue,
+    fontSize: 48,
+    fontWeight: 'bold'
+  });
+  badge.anchor.set(.5, 0);
   void _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_0___default()(_context = ['eraser', 'pencil', 'tip']).call(_context, function (id, i) {
     var item = PIXI.Sprite.from("icon.".concat(id, ".png"));
     item.name = id;
@@ -60697,9 +60699,11 @@ toolbar.init = function () {
   });
 };
 
-toolbar.refresh = function () {
-  badge.text = "".concat(_util__WEBPACK_IMPORTED_MODULE_1__["store"].tip.count);
-  void (this.children[1].tint = _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray);
+toolbar.refresh = function (opt) {
+  badge.text = "".concat(opt.count);
+  if (opt.mode == null) return;
+  mode = opt.mode;
+  void (this.children[1].tint = mode ? _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Gray : _enum__WEBPACK_IMPORTED_MODULE_2__["Color"].Blue);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (toolbar);
@@ -61165,19 +61169,21 @@ function format(i) {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(PIXI) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "show", function() { return show; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hide", function() { return hide; });
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs3/regenerator */ "./node_modules/@babel/runtime-corejs3/regenerator/index.js");
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/bind */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/bind.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
-/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
-/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
-/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/level */ "./level/index.ts");
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/slicedToArray */ "./node_modules/@babel/runtime-corejs3/helpers/esm/slicedToArray.js");
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime-corejs3/regenerator */ "./node_modules/@babel/runtime-corejs3/regenerator/index.js");
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/bind */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/bind.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime-corejs3/core-js-stable/instance/concat */ "./node_modules/@babel/runtime-corejs3/core-js-stable/instance/concat.js");
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime-corejs3/helpers/esm/asyncToGenerator */ "./node_modules/@babel/runtime-corejs3/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ~/core */ "./src/core/index.ts");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ~/module */ "./src/module/index.ts");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ~/util */ "./src/util/index.ts");
+/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/level */ "./level/index.ts");
+
 
 
 
@@ -61188,6 +61194,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var min = Math.min;
+var mode = _module__WEBPACK_IMPORTED_MODULE_7__["Mode"].Pen;
 var container;
 
 function init() {
@@ -61195,11 +61202,11 @@ function init() {
 }
 
 function _init() {
-  _init = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+  _init = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee2() {
     var _context2, _context3;
 
     var rect;
-    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context5) {
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee2$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
@@ -61209,146 +61216,88 @@ function _init() {
           case 2:
             rect = _context5.sent;
             container = new PIXI.Container();
-            _module__WEBPACK_IMPORTED_MODULE_6__["head"].init({
+            _module__WEBPACK_IMPORTED_MODULE_7__["head"].init({
               width: 720,
               height: 60,
               duration: 0,
-              grade: _util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade,
-              index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default()(_context2 = "".concat(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.index + 1, " / ")).call(_context2, _level__WEBPACK_IMPORTED_MODULE_8__["default"][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade].length)
+              grade: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade,
+              index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default()(_context2 = "".concat(_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.index + 1, " / ")).call(_context2, _level__WEBPACK_IMPORTED_MODULE_9__["default"][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade].length)
             });
-            _module__WEBPACK_IMPORTED_MODULE_6__["head"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_6__["head"].width / 2, 0);
-            _module__WEBPACK_IMPORTED_MODULE_6__["head"].position.set(_core__WEBPACK_IMPORTED_MODULE_5__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_5__["pixelRatio"]);
-            _module__WEBPACK_IMPORTED_MODULE_6__["head"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_6__["grid"].init({
+            _module__WEBPACK_IMPORTED_MODULE_7__["head"].pivot.set(_module__WEBPACK_IMPORTED_MODULE_7__["head"].width / 2, 0);
+            _module__WEBPACK_IMPORTED_MODULE_7__["head"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, (rect.bottom + min(rect.top, 20)) * _core__WEBPACK_IMPORTED_MODULE_6__["pixelRatio"]);
+            _module__WEBPACK_IMPORTED_MODULE_7__["head"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].init({
               size: 80
             });
-            _module__WEBPACK_IMPORTED_MODULE_6__["grid"].pivot.set(360, 0);
-            _module__WEBPACK_IMPORTED_MODULE_6__["grid"].position.set(_core__WEBPACK_IMPORTED_MODULE_5__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_6__["head"].y + _module__WEBPACK_IMPORTED_MODULE_6__["head"].height + 20);
-            _module__WEBPACK_IMPORTED_MODULE_6__["grid"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_6__["grid"].on('done', function () {
-              _module__WEBPACK_IMPORTED_MODULE_6__["sound"].play('win.mp3');
+            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].pivot.set(360, 0);
+            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_7__["head"].y + _module__WEBPACK_IMPORTED_MODULE_7__["head"].height + 20);
+            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_7__["grid"].on('done', function () {
+              _module__WEBPACK_IMPORTED_MODULE_7__["sound"].play('win.mp3');
               next();
             });
-            _module__WEBPACK_IMPORTED_MODULE_6__["numpad"].init();
-            _module__WEBPACK_IMPORTED_MODULE_6__["numpad"].pivot.set(360, 0);
-            _module__WEBPACK_IMPORTED_MODULE_6__["numpad"].position.set(_core__WEBPACK_IMPORTED_MODULE_5__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_6__["grid"].y + _module__WEBPACK_IMPORTED_MODULE_6__["grid"].height + 20);
-            _module__WEBPACK_IMPORTED_MODULE_6__["numpad"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_6__["numpad"].on('output', _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_1___default()(_context3 = _module__WEBPACK_IMPORTED_MODULE_6__["grid"].input).call(_context3, _module__WEBPACK_IMPORTED_MODULE_6__["grid"]));
-            _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].init();
-            _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].pivot.set(360, 64);
-            _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].position.set(_core__WEBPACK_IMPORTED_MODULE_5__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_5__["screen"].height - 20);
-            _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].scale.set(window.zoom);
-            _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].on('output', function (v) {
+            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].init();
+            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].pivot.set(360, 0);
+            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, _module__WEBPACK_IMPORTED_MODULE_7__["grid"].y + _module__WEBPACK_IMPORTED_MODULE_7__["grid"].height + 20);
+            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_7__["numpad"].on('output', _babel_runtime_corejs3_core_js_stable_instance_bind__WEBPACK_IMPORTED_MODULE_2___default()(_context3 = _module__WEBPACK_IMPORTED_MODULE_7__["grid"].input).call(_context3, _module__WEBPACK_IMPORTED_MODULE_7__["grid"]));
+            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].init();
+            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].pivot.set(360, 64);
+            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].position.set(_core__WEBPACK_IMPORTED_MODULE_6__["screen"].width / 2, _core__WEBPACK_IMPORTED_MODULE_6__["screen"].height - 20);
+            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].scale.set(window.zoom);
+            _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].on('output', function (v) {
               switch (v) {
                 case 'eraser':
                   {
-                    _module__WEBPACK_IMPORTED_MODULE_6__["grid"].erase();
+                    _module__WEBPACK_IMPORTED_MODULE_7__["grid"].erase();
                     break;
                   }
 
                 case 'pencil':
                   {
-                    _module__WEBPACK_IMPORTED_MODULE_6__["grid"].switch();
+                    mode ^= 1;
+                    _module__WEBPACK_IMPORTED_MODULE_7__["grid"].switch(mode);
                     break;
                   }
 
                 case 'tip':
                   {
-                    if (_util__WEBPACK_IMPORTED_MODULE_7__["store"].tip.count > 0) {
-                      _module__WEBPACK_IMPORTED_MODULE_6__["grid"].tip();
-                      _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].refresh();
+                    if (_util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count > 0) {
+                      _module__WEBPACK_IMPORTED_MODULE_7__["grid"].tip();
+                      _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].refresh({
+                        count: _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count
+                      });
                     } else {
                       wx.showModal({
                         title: '获取提示',
                         content: '观看视频广告获取3次提示机会',
                         success: function () {
-                          var _success = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-                            var _window, videoAd, ok, fn, _fn;
-
-                            return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context4) {
+                          var _success = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee() {
+                            var ok;
+                            return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context4) {
                               while (1) {
                                 switch (_context4.prev = _context4.next) {
                                   case 0:
-                                    _window = window, videoAd = _window.videoAd;
-                                    _context4.next = 3;
-                                    return videoAd.show().then(function () {
-                                      return true;
-                                    }).catch(function () {
-                                      return null;
-                                    });
+                                    _context4.next = 2;
+                                    return showVideoAd();
 
-                                  case 3:
-                                    ok = _context4.sent;
-
-                                    if (!ok) {
-                                      _context4.next = 8;
-                                      break;
-                                    }
-
-                                    fn = function fn(info) {
-                                      videoAd.offClose(fn);
-                                      if (!info.isEnded) return;
-                                      _util__WEBPACK_IMPORTED_MODULE_7__["store"].tip.count += 3;
-                                      _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].refresh();
-                                    };
-
-                                    videoAd.onClose(fn);
-                                    return _context4.abrupt("return");
-
-                                  case 8:
-                                    _context4.next = 10;
-                                    return videoAd.load().then(function () {
-                                      return true;
-                                    }).catch(function () {
-                                      return null;
-                                    });
-
-                                  case 10:
+                                  case 2:
                                     ok = _context4.sent;
 
                                     if (ok) {
-                                      _context4.next = 13;
+                                      _context4.next = 5;
                                       break;
                                     }
 
-                                    return _context4.abrupt("return", wx.showToast({
-                                      title: '广告加载失败',
-                                      icon: 'none'
-                                    }));
-
-                                  case 13:
-                                    _context4.next = 15;
-                                    return videoAd.show().then(function () {
-                                      return true;
-                                    }).catch(function () {
-                                      return null;
-                                    });
-
-                                  case 15:
-                                    ok = _context4.sent;
-
-                                    if (!ok) {
-                                      _context4.next = 20;
-                                      break;
-                                    }
-
-                                    _fn = function _fn(info) {
-                                      videoAd.offClose(_fn);
-                                      if (!info.isEnded) return;
-                                      _util__WEBPACK_IMPORTED_MODULE_7__["store"].tip.count += 3;
-                                      _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].refresh();
-                                    };
-
-                                    videoAd.onClose(_fn);
                                     return _context4.abrupt("return");
 
-                                  case 20:
-                                    wx.showToast({
-                                      title: '广告加载失败',
-                                      icon: 'none'
+                                  case 5:
+                                    _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count += 3;
+                                    _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].refresh({
+                                      count: _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count
                                     });
 
-                                  case 21:
+                                  case 7:
                                   case "end":
                                     return _context4.stop();
                                 }
@@ -61370,8 +61319,8 @@ function _init() {
               }
             });
             refresh();
-            container.addChild(_module__WEBPACK_IMPORTED_MODULE_6__["head"], _module__WEBPACK_IMPORTED_MODULE_6__["grid"], _module__WEBPACK_IMPORTED_MODULE_6__["numpad"], _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"]);
-            _core__WEBPACK_IMPORTED_MODULE_5__["stage"].addChild(container);
+            container.addChild(_module__WEBPACK_IMPORTED_MODULE_7__["head"], _module__WEBPACK_IMPORTED_MODULE_7__["grid"], _module__WEBPACK_IMPORTED_MODULE_7__["numpad"], _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"]);
+            _core__WEBPACK_IMPORTED_MODULE_6__["stage"].addChild(container);
 
           case 26:
           case "end":
@@ -61386,19 +61335,28 @@ function _init() {
 function refresh() {
   var _context;
 
-  _module__WEBPACK_IMPORTED_MODULE_6__["head"].refresh({
-    grade: _util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade,
-    duration: _util__WEBPACK_IMPORTED_MODULE_7__["store"].last.duration,
-    index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_3___default()(_context = "".concat(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.index + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_8__["default"][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade].length)
+  _module__WEBPACK_IMPORTED_MODULE_7__["head"].refresh({
+    grade: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade,
+    duration: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.duration,
+    index: _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_4___default()(_context = "".concat(_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.index + 1, " / ")).call(_context, _level__WEBPACK_IMPORTED_MODULE_9__["default"][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade].length)
   });
-  _module__WEBPACK_IMPORTED_MODULE_6__["toolbar"].refresh();
-  _util__WEBPACK_IMPORTED_MODULE_7__["store"].last.cells ? _module__WEBPACK_IMPORTED_MODULE_6__["grid"].restore(_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.cells) : _module__WEBPACK_IMPORTED_MODULE_6__["grid"].refresh(_level__WEBPACK_IMPORTED_MODULE_8__["default"][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_7__["store"].last.index]);
+  _module__WEBPACK_IMPORTED_MODULE_7__["toolbar"].refresh({
+    count: _util__WEBPACK_IMPORTED_MODULE_8__["store"].tip.count,
+    mode: mode
+  });
+  _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.cells ? _module__WEBPACK_IMPORTED_MODULE_7__["grid"].restore({
+    data: _util__WEBPACK_IMPORTED_MODULE_8__["store"].last.cells,
+    mode: mode
+  }) : _module__WEBPACK_IMPORTED_MODULE_7__["grid"].refresh({
+    data: _level__WEBPACK_IMPORTED_MODULE_9__["default"][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.grade][_util__WEBPACK_IMPORTED_MODULE_8__["store"].last.index],
+    mode: mode
+  });
 }
 
 function next() {
-  var last = _util__WEBPACK_IMPORTED_MODULE_7__["store"].last;
+  var last = _util__WEBPACK_IMPORTED_MODULE_8__["store"].last;
 
-  if (++last.index === _level__WEBPACK_IMPORTED_MODULE_8__["default"][last.grade].length) {
+  if (++last.index === _level__WEBPACK_IMPORTED_MODULE_9__["default"][last.grade].length) {
     last.index--;
     wx.showToast({
       title: '当前难度已通关',
@@ -61410,20 +61368,71 @@ function next() {
   refresh();
 }
 
+function showVideoAd() {
+  return _showVideoAd.apply(this, arguments);
+}
+
+function _showVideoAd() {
+  _showVideoAd = Object(_babel_runtime_corejs3_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__["default"])( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3() {
+    var _window, videoAd, _createPromise, _createPromise2, promise, resolve, ok, fn;
+
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _window = window, videoAd = _window.videoAd;
+            _createPromise = Object(_util__WEBPACK_IMPORTED_MODULE_8__["createPromise"])(), _createPromise2 = Object(_babel_runtime_corejs3_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_createPromise, 2), promise = _createPromise2[0], resolve = _createPromise2[1];
+            _context6.next = 4;
+            return videoAd.show().then(function () {
+              return true;
+            }).catch(function () {
+              return false;
+            });
+
+          case 4:
+            ok = _context6.sent;
+
+            if (ok) {
+              fn = function fn(info) {
+                videoAd.offClose(fn);
+                resolve(info.isEnded);
+              };
+
+              videoAd.onClose(fn);
+            } else {
+              resolve(false);
+              wx.showToast({
+                title: '视频广告加载失败',
+                icon: 'none'
+              });
+            }
+
+            return _context6.abrupt("return", promise);
+
+          case 7:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee3);
+  }));
+  return _showVideoAd.apply(this, arguments);
+}
+
 function show(opt) {
-  opt && (_util__WEBPACK_IMPORTED_MODULE_7__["store"].last = {
+  opt && (_util__WEBPACK_IMPORTED_MODULE_8__["store"].last = {
     grade: opt.grade,
     index: opt.index,
     duration: 0,
     cells: null
   });
-  _module__WEBPACK_IMPORTED_MODULE_6__["btnBack"].show();
+  _module__WEBPACK_IMPORTED_MODULE_7__["btnBack"].show();
   if (!container) return init();
   container.visible = true;
   refresh();
 }
 function hide() {
-  _module__WEBPACK_IMPORTED_MODULE_6__["btnBack"].hide();
+  _module__WEBPACK_IMPORTED_MODULE_7__["btnBack"].hide();
   container.visible = false;
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js")))

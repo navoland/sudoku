@@ -1,10 +1,10 @@
 import {store} from '~/util'
-import {Color} from './enum'
+import {Color, Mode} from './enum'
 
 const toolbar: Toolbar = new PIXI.Graphics()
 
-const badge = new PIXI.Text(`${store.tip.count}`, {fill: Color.Blue, fontSize: 48, fontWeight: 'bold'})
-badge.anchor.set(.5, 0)
+let badge: PIXI.Text
+let mode: Mode
 
 toolbar.init = function() {
   this
@@ -18,11 +18,13 @@ toolbar.init = function() {
     if (!(e.target instanceof PIXI.Sprite)) return
     const {name} = e.target
     if (name === 'pencil') {
-      e.target.tint = e.target.tint === Color.Blue ? Color.Gray : Color.Blue
+      e.target.tint = mode ? Color.Blue : Color.Gray
     }
     this.emit('output', e.target.name)
   })
 
+  badge = new PIXI.Text(`${store.tip.count}`, {fill: Color.Blue, fontSize: 48, fontWeight: 'bold'})
+  badge.anchor.set(.5, 0)
 
   void ['eraser', 'pencil', 'tip'].forEach((id, i) => {
     const item = PIXI.Sprite.from(`icon.${id}.png`)
@@ -42,14 +44,16 @@ toolbar.init = function() {
   })
 }
 
-toolbar.refresh = function() {
-  badge.text = `${store.tip.count}`
-  void ((this.children[1] as PIXI.Sprite).tint = Color.Gray)
+toolbar.refresh = function(opt) {
+  badge.text = `${opt.count}`
+  if (opt.mode == null) return
+  mode = opt.mode
+  void ((this.children[1] as PIXI.Sprite).tint = mode ? Color.Gray : Color.Blue)
 }
 
 interface Toolbar extends PIXI.Graphics {
   init?(this: Toolbar): void
-  refresh?(this: Toolbar): void
+  refresh?(this: Toolbar, opt: {count?: number, mode?: Mode}): void
 }
 
 export default toolbar

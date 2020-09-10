@@ -1,10 +1,11 @@
 import {pixelRatio, stage, screen} from '~/core'
-import {btnBack, head, grid, numpad, toolbar, sound} from '~/module'
-import {store} from '~/util'
+import {btnBack, head, grid, numpad, toolbar, sound, Mode} from '~/module'
+import {createPromise, store} from '~/util'
 import levels from '@/level'
 
 const {min} = Math
 
+let mode = Mode.Pen
 let container: PIXI.Container
 
 async function init() {
@@ -50,45 +51,24 @@ async function init() {
       }
 
       case 'pencil': {
-        grid.switch()
+        mode ^= 1
+        grid.switch(mode)
         break
       }
 
       case 'tip': {
         if (store.tip.count > 0) {
           grid.tip()
-          toolbar.refresh()
+          toolbar.refresh({count: store.tip.count})
         } else {
           wx.showModal({
             title: '获取提示',
             content: '观看视频广告获取3次提示机会',
             success: async () => {
-              const {videoAd} = window
-              let ok = await videoAd.show().then(() => true).catch(() => null)
-              if (ok) {
-                const fn = function(info: any) {
-                  videoAd.offClose(fn)
-                  if (!info.isEnded) return
-                  store.tip.count += 3
-                  toolbar.refresh()
-                }
-                videoAd.onClose(fn)
-                return
-              }
-              ok = await videoAd.load().then(() => true).catch(() => null)
-              if (!ok) return wx.showToast({title: '广告加载失败', icon: 'none'})
-              ok = await videoAd.show().then(() => true).catch(() => null)
-              if (ok) {
-                const fn = function(info: any) {
-                  videoAd.offClose(fn)
-                  if (!info.isEnded) return
-                  store.tip.count += 3
-                  toolbar.refresh()
-                }
-                videoAd.onClose(fn)
-                return
-              }
-              wx.showToast({title: '广告加载失败', icon: 'none'})
+              const ok = await showVideoAd()
+              if (!ok) return
+              store.tip.count += 3
+              toolbar.refresh({count: store.tip.count})
             }
           })
         }
@@ -108,10 +88,10 @@ function refresh() {
     duration: store.last.duration,
     index: `${store.last.index + 1} / ${levels[store.last.grade].length}`
   })
-  toolbar.refresh()
+  toolbar.refresh({count: store.tip.count, mode})
   store.last.cells ?
-    grid.restore(store.last.cells) :
-    grid.refresh(levels[store.last.grade][store.last.index] as ILevelData)
+    grid.restore({data: store.last.cells, mode}) :
+    grid.refresh({data: levels[store.last.grade][store.last.index] as ILevelData, mode})
 }
 
 function next() {
@@ -122,6 +102,23 @@ function next() {
   }
   last.duration = 0
   refresh()
+}
+
+async function showVideoAd() {
+  const {videoAd} = window
+  const [promise, resolve] = createPromise<boolean>()
+  let ok = await videoAd.show().then(() => true).catch(() => false)
+  if (ok) {
+    const fn = function(info: {isEnded: boolean}) {
+      videoAd.offClose(fn)
+      resolve(info.isEnded)
+    }
+    videoAd.onClose(fn)
+  } else {
+    resolve(false)
+    wx.showToast({title: '视频广告加载失败', icon: 'none'})
+  }
+  return promise
 }
 
 export function show(opt: {grade: number, index: number}) {

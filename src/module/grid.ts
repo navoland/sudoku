@@ -80,9 +80,9 @@ grid.init = function(opt) {
   }
 }
 
-grid.refresh = async function(data) {
-  this.data = data
-  mode = Mode.Pen
+grid.refresh = async function(opt) {
+  this.data = opt.data
+  mode = opt.mode
   for (const row of rows) {
     const [promise, resolve] = createPromise()
     for (const cell of row) {
@@ -98,7 +98,7 @@ grid.refresh = async function(data) {
           cell.tint = (v.r * 255 << 16) + (v.g * 255 << 8) + v.b * 255 | 0
         },
         complete: () => {
-          const num = +data[0][cell.index]
+          const num = +opt.data[0][cell.index]
           num && cell.preset(num)
         }
       })
@@ -107,8 +107,8 @@ grid.refresh = async function(data) {
   }
 }
 
-grid.switch = function() {
-  mode = mode === Mode.Pen ? Mode.Pencil : Mode.Pen
+grid.switch = function(v) {
+  mode = v
   sound.play(`${mode === Mode.Pen ? 'pen' : 'pencil'}.mp3`)
 }
 
@@ -140,11 +140,11 @@ grid.tip = function() {
 }
 
 /** 恢复填写记录 */
-grid.restore = function (data) {
-  mode = Mode.Pen
+grid.restore = function(opt) {
+  mode = opt.mode
   for (let i = 0; i < 81; i++) {
     const cell = cells[i]
-    const item = data[i]
+    const item = opt.data[i]
     cell.empty()
     if (item.preset) {
       cell.preset(item.preset)
@@ -212,12 +212,12 @@ interface Grid extends PIXI.Graphics {
   data?: ILevelData
   tip?(): void
   erase?(): void
-  switch?(): void
+  switch?(v: Mode): void
   check?(this: Grid): boolean
   input?(this: Grid, v: number): void
   init?(this: Grid, opt: IOption): void
-  refresh?(this: Grid, data: ILevelData): void
-  restore?(data: typeof store.last.cells): void
+  refresh?(this: Grid, opt: {data: ILevelData, mode: Mode}): void
+  restore?(this: Grid, opt: {data: typeof store.last.cells, mode: Mode}): void
 }
 
 export default grid
