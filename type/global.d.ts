@@ -453,6 +453,21 @@ declare module wx {
   interface GameClubButton {
     show: () => void
     hide: () => void
+    style: {
+      left: number
+      right?: number
+      top: number
+      width: number
+      height: number
+      backgroundColor?: number
+      borderColor?: number
+      borderWidth?: number
+      borderRadius?: number
+      color?: string
+      textAlign?: 'left' | 'center' | 'right'
+      fontSize?: number
+      lineHeight?: number
+    }
   }
 
   function createGameClubButton(opt: {

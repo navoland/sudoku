@@ -54,7 +54,7 @@ chart.load = function() {
       grade.visible =
       duration.visible = !!item
 
-      if (!item) continue
+      if (!item || !item.last) continue
 
       const {user = {}, last, _id} = item
       user.avatar ||= 'avatar.png'

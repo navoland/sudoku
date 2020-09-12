@@ -27,7 +27,6 @@ export default async function() {
     const outdated = compare(store.file[file.name], file.version) < 0
 
     outdated && (store.file[file.name] = file.version)
-
     if (!existed || outdated) return download(file.name)
     return `${ROOT}/${file.name}`
   }))

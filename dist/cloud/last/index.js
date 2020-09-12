@@ -13,6 +13,7 @@ const _ = db.command
 exports.main = async e => {
   const {userInfo: {openId: id}} = e
   let data = await query(id).catch(() => null)
+  e.last.timestamp = Date.now()
   if (data) return update(id, {last: e.last})
   return set(id, {last: e.last})
 }

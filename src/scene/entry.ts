@@ -6,6 +6,16 @@ import {store, delay} from '~/util'
 const width = 600
 const height = chart.height + 260
 const grades = Object.values(Grade)
+const clubButton = wx.createGameClubButton({
+  icon: 'green',
+  style: {
+    left: 0,
+    top: 0,
+    width: 40,
+    height: 40
+  }
+})
+clubButton.hide()
 
 let layout: PIXI.Graphics
 let container: PIXI.Container
@@ -78,6 +88,11 @@ function init() {
     delay(10).then(loop)
   }()
 
+  window.interaction.then(rect => {
+    clubButton.style.top = rect.bottom + rect.top - 40
+    clubButton.style.left = screen.width - rect.right * 2
+  })
+
 
   layout.pivot.set(width / 2, height / 2)
   layout.position.set(screen.width / 2, screen.height / 2)
@@ -134,6 +149,7 @@ function refresh() {
 }
 
 export function show() {
+  clubButton.show()
   if (!container) return init()
   container.visible = true
   refresh()
@@ -141,6 +157,7 @@ export function show() {
 
 export function hide() {
   container.visible = false
+  clubButton.hide()
 }
 
 function format(i: number) {
