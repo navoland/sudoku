@@ -1,6 +1,7 @@
 import {monitor, screen} from '~/core'
 import {preload, entry, game} from '~/scene'
-import {createPromise} from './util'
+import {call} from './module/wx'
+import {createPromise, store} from './util'
 
 const {min} = Math
 
@@ -66,3 +67,30 @@ wx.onShareAppMessage(() => {
     imageUrl: 'cloud://colloc-dev.636f-colloc-dev-1258618978/image/snapshot.png'
   }
 })
+
+wx.getUserInfo({
+  success: ({userInfo}) => {
+    const {user} = store
+    user.name = userInfo.nickName
+    user.name = userInfo.nickName
+    user.avatar = userInfo.avatarUrl
+    user.city = userInfo.city
+    user.country = userInfo.country
+    user.gender = userInfo.gender
+    user.province = userInfo.province
+
+    call({
+      name: 'user',
+      data: {user}
+    }).catch(console.log)
+  }
+})
+
+
+/* 检查更新 */
+{
+  const manager = wx.getUpdateManager()
+  manager.onUpdateReady(() => {
+    manager.applyUpdate()
+  })
+}

@@ -107,10 +107,8 @@ function refresh() {
 async function next() {
   const {last} = store
   call({
-    name: 'user',
+    name: 'last',
     data: {
-      type: 'set',
-      user: store.user,
       last: {
         grade: last.grade,
         index: last.index,

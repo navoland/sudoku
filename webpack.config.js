@@ -63,11 +63,9 @@ const conf = {
     })
   ],
 
-  mode: prod ? 'production' : 'development'
-}
+  mode: prod ? 'production' : 'development',
 
-if (prod) {
-  conf.optimization = {
+  optimization: {
     minimize: true,
     minimizer: [
       new TerserPlugin({
@@ -81,7 +79,9 @@ if (prod) {
       })
     ]
   }
-} else {
+}
+
+if (!prod) {
   conf.plugins.push(
     new ProgressBarPlugin()
   )

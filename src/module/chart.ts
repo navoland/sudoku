@@ -45,7 +45,7 @@ for (let i = 0; i < 8; i++) {
 }
 
 chart.load = function() {
-  call({name: 'chart'}).then((data: any[]) => {
+  return call({name: 'chart'}).then((data: any[]) => {
     for (let i = 0; i < 8; i++) {
       const [avatar, name, grade, duration] = rows[i]
       const item = data[i]
@@ -56,8 +56,11 @@ chart.load = function() {
 
       if (!item) continue
 
-      const {user, last} = item
-      avatar.texture = PIXI.Texture.from(user.avatar)
+      const {user = {}, last, _id} = item
+      user.avatar ||= 'avatar.png'
+      user.name ||= _id
+
+      avatar.texture = PIXI.Texture.from(user?.avatar || 'avatar.png')
       avatar.width =
       avatar.height = 60
       name.text = user.name.length > 10 ? `${user.name.slice(0, 10)}...` : user.name
@@ -79,11 +82,11 @@ chart.load = function() {
       grade.visible =
       duration.visible = true
     }
-  })
+  }).catch(console.log)
 }
 
 interface Chart extends PIXI.Graphics {
-  load?(this: Chart): void
+  load?(this: Chart): Promise<unknown>
 }
 
 

@@ -29,6 +29,15 @@ interface IScene {
 }
 
 declare module wx {
+  function navigateToMiniProgram(opt: {
+    appId: string
+    path?: string
+    extraData?: unknown
+    success?(): void
+    fail?(): void
+    complete?(): void
+  }): void
+
   interface RewardedVideoAd {
     load(): Promise<unknown>
     show(): Promise<unknown>

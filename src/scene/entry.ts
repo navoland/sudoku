@@ -74,7 +74,7 @@ function init() {
   layout.addChild(chart)
 
   void function loop() {
-    if (container.visible) chart.load()
+    if (container.visible) return chart.load().then(() => delay(10)).then(loop)
     delay(10).then(loop)
   }()
 

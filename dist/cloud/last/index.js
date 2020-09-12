@@ -13,10 +13,8 @@ const _ = db.command
 exports.main = async e => {
   const {userInfo: {openId: id}} = e
   let data = await query(id).catch(() => null)
-  if (data) {
-    data = merge(data, e.user)
-    return update(id, {user: data})
-  } else return set(id, {user: e.user})
+  if (data) return update(id, {last: e.last})
+  return set(id, {last: e.last})
 }
 
 function query(id) {
@@ -31,24 +29,4 @@ function set(id, data) {
 function update(id, data) {
   delete data._id
   return user.doc(id).update({data})
-}
-
-function merge(a, b) {
-  if (a == null) return b
-  for (const k in b) {
-    const oa = isObject(a[k])
-    const ob = isObject(b[k])
-
-    if (oa && ob) {
-      merge(a[k], b[k])
-      continue
-    }
-
-    b[k] != null && (a[k] = b[k])
-  }
-  return a
-}
-
-function isObject(o) {
-  return Object.prototype.toString.call(o).includes('Object')
 }

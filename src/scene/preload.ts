@@ -4,8 +4,8 @@ import {fs, download} from '~/module/wx'
 const {mkdir, access, read, ROOT} = fs
 const dirs = ['font', 'anime', 'sound', 'texture']
 const files = [
-  {name: 'texture/ui.png', version: '1.0.0'},
-  {name: 'texture/ui.json', version: '1.0.0'},
+  {name: 'texture/ui.png', version: '1.0.1'},
+  {name: 'texture/ui.json', version: '1.0.1'},
   {name: 'sound/tap.mp3', version: '1.0.0'},
   {name: 'sound/pen.mp3', version: '1.0.0'},
   {name: 'sound/win.mp3', version: '1.0.0'},
@@ -16,8 +16,6 @@ const files = [
   {name: 'sound/pencil.mp3', version: '1.0.0'},
 ]
 
-const forceUpdate = false
-
 export default async function() {
   for (const dir of dirs) {
     const existed = await access(dir).catch(() => false)
@@ -26,10 +24,8 @@ export default async function() {
 
   const items = await Promise.all(files.map(async file => {
     const existed = await access(file.name).catch(() => false)
-
-    if (!PROD) return forceUpdate || !existed ? download(file.name) : `${ROOT}/${file.name}`
-
     const outdated = compare(store.file[file.name], file.version) < 0
+
     outdated && (store.file[file.name] = file.version)
 
     if (!existed || outdated) return download(file.name)
