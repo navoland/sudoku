@@ -65,7 +65,7 @@ const conf = {
 
   mode: prod ? 'production' : 'development',
 
-  optimization: {
+  optimization: prod ? {
     minimize: true,
     minimizer: [
       new TerserPlugin({
@@ -78,7 +78,7 @@ const conf = {
         },
       })
     ]
-  }
+  } : undefined
 }
 
 if (!prod) {

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "browserslist": [
-    "android >= 4",
+    "android >= 6",
     "ios >= 10"
   ],
   "scripts": {
