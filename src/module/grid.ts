@@ -1,8 +1,9 @@
-import {Color, Mode} from './enum'
+import {animate, easeIn} from 'popmotion'
+
 import Cell from './Cell'
+import {Color, Mode} from './enum'
 import * as sound from './sound'
 import {createPromise, store} from '~/util'
-import {easing, tween} from 'popmotion'
 
 let mode = Mode.Pen
 let selected: Cell
@@ -89,17 +90,16 @@ grid.refresh = async function(opt) {
     const [promise, resolve] = createPromise()
     for (const cell of row) {
       cell.empty()
-      const anime = tween({
+      animate({
         from: .6,
         to: 1,
         duration: 2e2,
-        ease: easing.easeIn
-      }).start({
-        update: (v: number) => {
-          anime.getProgress() > .5 && resolve()
+        ease: easeIn,
+        onUpdate: (v) => {
+          v > .8 && resolve()
           cell.tint = (v * 255 << 16) + (v * 255 << 8) + v * 255
         },
-        complete: () => {
+        onComplete: () => {
           const num = +opt.data[0][cell.index]
           num && cell.preset(num)
         }

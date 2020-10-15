@@ -3,88 +3,90 @@ const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
-const prod = process.argv.includes('-p')
+module.exports = env => {
+  const prod = env.prod
 
-const conf = {
-  entry: ['@iro/wechat-adapter', './src/app.ts'],
+  const conf = {
+    entry: ['@iro/wechat-adapter', './src/app.ts'],
 
-  output: {
-    path: path.resolve('dist/root'),
-    filename: 'game.js'
-  },
+    output: {
+      path: path.resolve('dist/root'),
+      filename: 'game.js'
+    },
 
-  resolve: {
-    extensions: ['.js', '.ts'],
-    alias: {
-      '@': path.resolve('.'),
-      '~': path.resolve('./src'),
-    }
-  },
-
-  devtool: prod ? false : 'source-map',
-
-  stats: 'errors-only',
-
-  module: {
-    rules: [
-      {
-        enforce: 'pre',
-        test: /\.ts$/,
-        use: ['eslint-loader'],
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.ts$/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true
-          }
-        },
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(vert|frag|html)$/,
-        use: ['raw-loader']
+    resolve: {
+      extensions: ['.js', '.ts'],
+      alias: {
+        '@': path.resolve('.'),
+        '~': path.resolve('./src'),
       }
-    ]
-  },
+    },
 
-  plugins: [
-    new webpack.DefinePlugin({
-      PROD: JSON.stringify(prod),
-      CLOUD_ID: JSON.stringify('colloc-dev'),
-      VERSION: JSON.stringify(require('./package.json').version),
-      CDN: JSON.stringify('cloud://colloc-dev.636f-colloc-dev-1258618978')
-    }),
+    devtool: prod ? false : 'source-map',
 
-    new webpack.ProvidePlugin({
-      PIXI: 'pixi.js',
-    })
-  ],
+    stats: 'errors-only',
 
-  mode: prod ? 'production' : 'development',
-
-  optimization: prod ? {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        parallel: 4,
-        extractComments: false,
-        terserOptions: {
-          output: {
-            comments: false
-          }
+    module: {
+      rules: [
+        {
+          enforce: 'pre',
+          test: /\.ts$/,
+          use: ['eslint-loader'],
+          exclude: /node_modules/,
         },
+        {
+          test: /\.ts$/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true
+            }
+          },
+          exclude: /node_modules/
+        },
+        {
+          test: /\.(vert|frag|html)$/,
+          use: ['raw-loader']
+        }
+      ]
+    },
+
+    plugins: [
+      new webpack.DefinePlugin({
+        PROD: JSON.stringify(prod),
+        CLOUD_ID: JSON.stringify('colloc-dev'),
+        VERSION: JSON.stringify(require('./package.json').version),
+        CDN: JSON.stringify('cloud://colloc-dev.636f-colloc-dev-1258618978')
+      }),
+
+      new webpack.ProvidePlugin({
+        PIXI: 'pixi.js',
       })
-    ]
-  } : undefined
-}
+    ],
 
-if (!prod) {
-  conf.plugins.push(
-    new ProgressBarPlugin()
-  )
-}
+    mode: prod ? 'production' : 'development',
 
-module.exports = conf
+    optimization: prod ? {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          parallel: 4,
+          extractComments: false,
+          terserOptions: {
+            output: {
+              comments: false
+            }
+          },
+        })
+      ]
+    } : undefined
+  }
+
+  if (!prod) {
+    conf.plugins.push(
+      new ProgressBarPlugin()
+    )
+  }
+
+  return conf
+}

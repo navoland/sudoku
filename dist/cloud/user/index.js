@@ -1,4 +1,3 @@
-// @ts-nocheck
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
 
@@ -12,9 +11,10 @@ const _ = db.command
 // 云函数入口函数
 exports.main = async e => {
   const {userInfo: {openId: id}} = e
-  let data = await query(id).catch(() => null)
+  let {_id, last, ...data} = await query(id).catch(() => null)
+
   if (data) {
-    data = merge(data, e.user)
+    data = merge(data.user, e.user)
     return update(id, {user: data})
   } else return set(id, {user: e.user})
 }

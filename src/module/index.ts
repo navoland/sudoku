@@ -1,6 +1,6 @@
 export * from './enum'
 export * as sound from './sound'
-export * as btnBack from './btnBack'
+export * as backButton from './backButton'
 export {default as grid} from './grid'
 export {default as head} from './head'
 export {default as chart} from './chart'

@@ -9,10 +9,8 @@ const grades = Object.values(Grade)
 const clubButton = wx.createGameClubButton({
   icon: 'green',
   style: {
-    left: 0,
-    top: 0,
-    width: 40,
-    height: 40
+    width: 32,
+    height: 32
   }
 })
 clubButton.hide()
@@ -37,7 +35,7 @@ function init() {
           success: ({tapIndex}) => {
             monitor.emit('scene:go', 'game', {
               grade: tapIndex,
-              index: store.last?.index || 0
+              index: store.grades[tapIndex] ?? 0
             })
           }
         })
@@ -87,12 +85,6 @@ function init() {
     if (container.visible) return chart.load().then(() => delay(10)).then(loop)
     delay(10).then(loop)
   }()
-
-  window.interaction.then(rect => {
-    clubButton.style.top = rect.bottom + rect.top - 40
-    clubButton.style.left = screen.width - rect.right * 2
-  })
-
 
   layout.pivot.set(width / 2, height / 2)
   layout.position.set(screen.width / 2, screen.height / 2)
@@ -149,7 +141,13 @@ function refresh() {
 }
 
 export function show() {
-  clubButton.show()
+  window.interaction.then(rect => {
+    clubButton.style.width =
+    clubButton.style.height = rect.height
+    clubButton.style.top = rect.top
+    clubButton.style.left = screen.width / 2 - rect.right
+    container?.visible && clubButton.show()
+  })
   if (!container) return init()
   container.visible = true
   refresh()

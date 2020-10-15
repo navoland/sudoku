@@ -13,7 +13,7 @@ interface Window {
 /** for wechat */
 declare const canvas: HTMLCanvasElement
 
-declare type ILevelData = [string, string, number, number, boolean]
+type ILevelData = [string, string, number, number, boolean]
 
 interface IEvent {
   x: number
@@ -29,15 +29,6 @@ interface IScene {
 }
 
 declare module wx {
-  function navigateToMiniProgram(opt: {
-    appId: string
-    path?: string
-    extraData?: unknown
-    success?(): void
-    fail?(): void
-    complete?(): void
-  }): void
-
   interface RewardedVideoAd {
     load(): Promise<unknown>
     show(): Promise<unknown>
@@ -50,6 +41,175 @@ declare module wx {
     adUnitId: string
     multiton?: boolean
   }): RewardedVideoAd
+
+  function getLaunchOptionsSync(): {
+    scene: string
+    query: any
+    shareTicket: string
+    referrerInfo: {
+      appId: string
+      extraData: any
+    }
+  }
+
+  function showKeyboard(opt: {
+    defaultValue?: string
+    maxLength?: number
+    multiple?: boolean
+    confirmHold?: boolean
+    confirmType?: 'done' | 'next' | 'search' | 'go' | 'send'
+    fail?(): void
+    success?(v: string): void
+    complete?(): void
+  }): void
+
+  function onKeyboardConfirm(opt: (opt: {
+    value: string
+  }) => void): void
+
+  function offKeyboardConfirm(opt: Function): void
+
+  interface IMember {
+    isReady: boolean
+    role: 0 | 1
+    posNum: number
+    headimg: string
+    nickname: string
+    clientId: number
+    enableToStart: boolean
+    memberExtInfo: string
+  }
+
+  interface IRoomInfo {
+    appId: string
+    roomIdStr: number
+    roomState: 1 | 2 | 3 | 4 | 5
+    maxMemberNum: number
+    createTimestamp: number
+    updateTimestamp: number
+    gameTick: number
+    startPercent: number
+    roomExtInfo: string
+    gameLastTime: number
+    udpReliabilityStrategy: number
+    memberList: IMember[]
+    seed: string
+  }
+
+  interface GameServerManager {
+    broadcastInRoom(opt: {
+      msg: string
+      toPosNumList?: number[]
+    }): Promise<any>
+    changeSeat(posNum: number): Promise<any>
+    createRoom(opt?: {
+      maxMemberNum: number
+      startPercent?: number
+      needUserInfo?: boolean
+      gameLastTime?: number
+      roomExtInfo?: string
+      memberExtInfo?: string
+      needGameSeed?: boolean
+    }): Promise<{data: {accessInfo: string, clientId: number}}>
+    endGame(): Promise<any>
+    getLostFrames(opt?: {
+      beginFrameId?: number
+      endFrameId?: number
+    }): Promise<{data: {frameList: any[]}}>
+    joinRoom(opt: {
+      accessInfo: string
+      memberExtInfo?: string
+    }): Promise<{data: {myPos: number, clientId: number}}>
+    login(): Promise<any>
+    logout(): Promise<any>
+    onSyncFrame(opt: (opt: {
+      frameId: number
+      actionList: string[] | ArrayBuffer[]
+    }) => void): void
+    uploadFrame(opt: {
+      actionList: string[] | ArrayBuffer[]
+    }): Promise<any>
+    onRoomInfoChange(opt: (opt: IRoomInfo) => void): void
+    updateReadyStatus(opt: {
+      accessInfo: string
+      isReady: boolean
+    }): Promise<any>
+    startGame(): Promise<{errCode: number, errMsg: string}>
+    onDisconnect(opt: (opt: {
+      res: {type: 'room' | 'game'}
+    }) => void): void
+    offSyncFrame(opt: Function): void
+    offRoomInfoChange(opt: Function): void
+    offDisconnect(opt: Function): void
+    getLastRoomInfo(): Promise<{
+      data: {
+        accessInfo: string
+        roomInfo: IRoomInfo
+      }
+    }>
+    reconnect(opt: {
+      accessInfo: string
+    }): Promise<{maxFrameId: number}>
+    getRoomInfo(): Promise<IRoomInfo>
+    onGameStart(opt: Function): void
+    offGameStart(opt: Function): void
+    onLogout(opt: Function): void
+    offLogout(opt: Function): void
+  }
+
+  function getGameServerManager(): GameServerManager
+
+  function onNetworkStatusChange(opt: (opt: {
+    isConnected: boolean
+    networkType: 'wifi' | '2g' | '3g' | '4g' | 'unknown' | 'none'
+  }) => void): void
+
+  interface SocketTask {
+    onOpen(opt: (opt: {
+      header: object
+      profile: object
+    }) => void): void
+    onMessage(opt: (opt: {data: string | ArrayBuffer}) => void): void
+    send(opt: {
+      data: string | ArrayBuffer
+      success?: () => void
+      fail?: () => void
+      complete?: () => void
+    }): void
+    onClose(opt: (opt: {
+      code: number
+      reason: string
+    }) => void): void
+    close(opt: {
+      code?: number
+      reason?: string
+      fail?(): void
+      success?(): void
+      complete?(): void
+    }): void
+    onError(opt: (opt: {errMsg: string}) => void): void
+  }
+
+  function connectSocket(opt: {
+    url: string,
+    header?: {[k: string]: any},
+    protocols?: string[],
+    tcpNoDelay?: boolean,
+    perMessageDeflate?: boolean,
+    timeout?: number,
+    success?: () => void,
+    fail?: () => void,
+    complete?: () => void
+  }): SocketTask
+
+  function navigateToMiniProgram(opt: {
+    appId: string
+    path?: string
+    extraData?: unknown
+    success?(): void
+    fail?(): void
+    complete?(): void
+  }): void
 
   interface IRect {
     width: number
@@ -453,44 +613,29 @@ declare module wx {
   interface GameClubButton {
     show: () => void
     hide: () => void
-    style: {
+    style: Partial<{
       left: number
-      right?: number
+      right: number
       top: number
       width: number
       height: number
-      backgroundColor?: number
-      borderColor?: number
-      borderWidth?: number
-      borderRadius?: number
-      color?: string
-      textAlign?: 'left' | 'center' | 'right'
-      fontSize?: number
-      lineHeight?: number
-    }
+      backgroundColor: number
+      borderColor: number
+      borderWidth: number
+      borderRadius: number
+      color: string
+      textAlign: 'left' | 'center' | 'right'
+      fontSize: number
+      lineHeight: number
+    }>
   }
 
   function createGameClubButton(opt: {
     type?: 'text' | 'string'
     text?: string
     image?: string
-    style: {
-      left: number
-      right?: number
-      top: number
-      width: number
-      height: number
-      backgroundColor?: number
-      borderColor?: number
-      borderWidth?: number
-      borderRadius?: number
-      color?: string
-      textAlign?: 'left' | 'center' | 'right'
-      fontSize?: number
-      lineHeight?: number
-    }
     icon: 'green' | 'white' | 'dark' | 'light'
-  }): GameClubButton
+  } & Pick<GameClubButton, 'style'>): GameClubButton
 
   interface CustomAd {
     show: () => Promise<unknown>
@@ -553,9 +698,7 @@ declare module wx {
   function createInterstitialAd(opt: {
     adUnitId: string
   }): InterstitialAd
-}
 
-declare module wx {
   module cloud {
     /** 调用云函数 */
     function callFunction(opt: {
@@ -613,9 +756,7 @@ declare module wx {
       throwOnNotFound?: boolean
     }): Database
   }
-}
 
-declare module wx {
   module env {
     const USER_DATA_PATH: string
   }

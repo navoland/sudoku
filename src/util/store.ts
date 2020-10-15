@@ -7,6 +7,8 @@ let store = {
     count: 3
   },
 
+  grades: [0, 0, 0, 0],
+
   last: null as {
     grade: number
     index: number

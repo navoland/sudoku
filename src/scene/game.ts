@@ -3,12 +3,12 @@ import {call} from '~/module/wx'
 import {pixelRatio, stage, screen} from '~/core'
 import {createPromise, delay, store} from '~/util'
 import {
-  btnBack, head, grid, numpad,
+  backButton, head, grid, numpad,
   toolbar, sound, Mode, particle,
 } from '~/module'
 
 
-const {min} = Math
+const {max, min} = Math
 
 let mode = Mode.Pen
 let container: PIXI.Container
@@ -122,6 +122,8 @@ async function next() {
     wx.showToast({title: '当前难度已通关', icon: 'none'})
   }
 
+  store.grades[last.grade] = max(store.grades[last.grade], last.index)
+
   last.cells = null
   last.duration = 0
   particle.start()
@@ -153,13 +155,13 @@ export function show(opt: {grade: number, index: number}) {
     duration: 0,
     cells: null
   })
-  btnBack.show()
+  backButton.show()
   if (!container) return init()
   container.visible = true
   refresh()
 }
 
 export function hide() {
-  btnBack.hide()
+  backButton.hide()
   container.visible = false
 }

@@ -2,7 +2,6 @@ import createPromise from './createPromise'
 
 export {createPromise}
 export {default as store} from './store'
-export {default as tween} from './tween'
 
 export function delay(t = 0) {
   const [promise, resolve] = createPromise()
