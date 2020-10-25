@@ -4,8 +4,8 @@ const fs = wx.getFileSystemManager()
 
 export const ROOT = wx.env.USER_DATA_PATH
 
-export function access(path: string) {
-  const [promise, resolve, reject] = createPromise()
+export function access<T>(path: string) {
+  const [promise, resolve, reject] = createPromise<T>()
   fs.access({
     path: `${ROOT}/${path}`,
     success: resolve,

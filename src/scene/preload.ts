@@ -23,10 +23,13 @@ export default async function() {
   }
 
   const items = await Promise.all(files.map(async file => {
-    const existed = await access(file.name).catch(() => false)
-    const outdated = compare(store.file[file.name], file.version) < 0
+    const existed = await access<{errMsg: string}>(file.name)
+      .then(info => info.errMsg === 'access:ok')
+      .catch(() => false)
+    const outdated = compare(store.file[file.name], file.version)
 
     outdated && (store.file[file.name] = file.version)
+
     if (!existed || outdated) return download(file.name)
     return `${ROOT}/${file.name}`
   }))
