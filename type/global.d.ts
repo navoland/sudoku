@@ -29,6 +29,16 @@ interface IScene {
 }
 
 declare module wx {
+  interface Worker {
+    onMessage(fn: (opt: {message: object}) => void): void
+    postMessage(message: object): void
+    terminate(): void
+  }
+
+  function createWorker(path: string, opt?: {
+    useExperimentalWorker?: boolean
+  }): Worker
+
   interface RewardedVideoAd {
     load(): Promise<unknown>
     show(): Promise<unknown>
@@ -693,6 +703,7 @@ declare module wx {
     onLoad: (opt: () => void) => void
     onError: (opt: (opt: {errMsg: string, errCode: number}) => void) => void
     onClose: (opt: () => void) => void
+    offClose: (opt: Function) => void
   }
 
   function createInterstitialAd(opt: {

@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
+
 module.exports = ({prod = false} = {}) => {
   const conf = {
     entry: ['@iro/wechat-adapter', './src/app.ts'],
@@ -24,14 +25,10 @@ module.exports = ({prod = false} = {}) => {
 
     stats: 'errors-only',
 
+    watch: !prod,
+
     module: {
       rules: [
-        {
-          enforce: 'pre',
-          test: /\.ts$/,
-          use: ['eslint-loader'],
-          exclude: /node_modules/,
-        },
         {
           test: /\.ts$/,
           use: {
@@ -59,12 +56,16 @@ module.exports = ({prod = false} = {}) => {
 
       new webpack.ProvidePlugin({
         PIXI: 'pixi.js',
+        dragonBones: 'dragonbones.js'
       })
     ],
 
-    mode: prod ? 'production' : 'development',
+    mode: 'development',
+  }
 
-    optimization: prod ? {
+  if (prod) {
+    conf.mode = 'production'
+    conf.optimization = {
       minimize: true,
       minimizer: [
         new TerserPlugin({
@@ -77,10 +78,8 @@ module.exports = ({prod = false} = {}) => {
           },
         })
       ]
-    } : undefined
-  }
-
-  if (!prod) {
+    }
+  } else {
     conf.plugins.push(
       new ProgressBarPlugin()
     )

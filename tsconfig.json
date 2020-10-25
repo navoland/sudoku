@@ -11,6 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "noEmit": true,
+    "skipLibCheck": true,
     "paths": {
       "~/*": ["src/*"],
       "@/*": ["./*"],
