@@ -3,7 +3,7 @@
   "packOptions": {
     "ignore": [
       {
-        "value": ".mapx",
+        "value": ".map",
         "type": "suffix"
       },
       {
