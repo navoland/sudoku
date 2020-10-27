@@ -32,7 +32,7 @@ async function init() {
     data: levels[store.last.grade][store.last.index] as ILevelData
   })
   grid.pivot.set(360, 0)
-  grid.position.set(screen.width / 2, head.y + head.height + 20)
+  grid.position.set(screen.width / 2, head.y + head.height + 10 * pixelRatio)
   grid.scale.set(window.zoom)
   grid.on('done', () => {
     sound.play('win.mp3')
@@ -41,13 +41,13 @@ async function init() {
 
   numpad.init()
   numpad.pivot.set(360, 0)
-  numpad.position.set(screen.width / 2, grid.y + grid.height + 20)
+  numpad.position.set(screen.width / 2, grid.y + grid.height + 10 * pixelRatio)
   numpad.scale.set(window.zoom)
   numpad.on('output', grid.input.bind(grid))
 
   toolbar.init()
   toolbar.pivot.set(360, 64)
-  toolbar.position.set(screen.width / 2, screen.height - 20)
+  toolbar.position.set(screen.width / 2, screen.height - 10 * pixelRatio)
   toolbar.scale.set(window.zoom)
   toolbar.on('output', (v: string) => {
     switch (v) {

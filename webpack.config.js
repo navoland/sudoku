@@ -3,7 +3,6 @@ const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
-
 module.exports = ({prod = false} = {}) => {
   const conf = {
     entry: ['@iro/wechat-adapter', './src/app.ts'],

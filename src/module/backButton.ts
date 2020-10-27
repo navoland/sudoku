@@ -1,7 +1,7 @@
 import {animate} from 'popmotion'
 
 import * as sound from './sound'
-import {screen, monitor, stage} from '~/core'
+import {screen, monitor, stage, pixelRatio} from '~/core'
 import {Color} from './enum'
 
 let btn: IButton
@@ -12,7 +12,6 @@ function init() {
   btn.visible = false
   btn.interactive = true
   btn.scale.set(.5 * window.zoom)
-  btn.position.set(52)
   btn.tint = Color.Gray
   btn.on('pointerdown', (e: IEvent) => {
     e.stopped = true
@@ -43,8 +42,8 @@ function init() {
   window.interaction.then(rect => {
     btn.visible = true
     btn.position.set(
-      screen.width - rect.right * 2 + btn.width / 2,
-      rect.bottom + rect.top
+      screen.width - rect.right * pixelRatio + btn.width / 2,
+      (rect.bottom + rect.top) * pixelRatio / 2
     )
   })
   stage.addChild(btn)
