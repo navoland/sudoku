@@ -27,10 +27,15 @@ async function init() {
   head.position.set(screen.width / 2, (rect.bottom + min(rect.top, 20)) * pixelRatio)
   head.scale.set(window.zoom)
 
+  wx.showLoading({title: '生成数独'})
+
   grid.init({
     size: 80,
     data: levels[store.last.grade][store.last.index] as ILevelData
   })
+
+  wx.hideLoading()
+
   grid.pivot.set(360, 0)
   grid.position.set(screen.width / 2, head.y + head.height + 10 * pixelRatio)
   grid.scale.set(window.zoom)
