@@ -21,5 +21,6 @@
       "esnext",
     ]
   },
+  "include": ["src", "type"],
   "exclude": ["node_modules", "dist"]
 }
