@@ -1,3 +1,5 @@
+import {mergeWith} from 'lodash'
+
 let store = {
   version: '1.0.0',
 
@@ -34,7 +36,9 @@ let store = {
 }
 
 try {
-  store = merge(store, JSON.parse(localStorage.getItem('store')))
+  mergeWith(store, JSON.parse(localStorage.getItem('store')), (raw, src) => {
+    if (Array.isArray(src)) return src
+  })
 } catch {
   // todo
 }
@@ -64,23 +68,3 @@ const handle = {
 }
 
 export default new Proxy<typeof store>(store, handle)
-
-
-function merge<T>(a: T, b: T) {
-  for (const k in b) {
-    const oa = isObject(a[k])
-    const ob = isObject(b[k])
-
-    if (oa && ob) {
-      merge(a[k], b[k])
-      continue
-    } else if (oa) continue
-
-    b[k] != null && (a[k] = b[k])
-  }
-  return a
-}
-
-function isObject(o: unknown) {
-  return Object.prototype.toString.call(o).includes('Object')
-}

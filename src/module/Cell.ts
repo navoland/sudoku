@@ -11,6 +11,24 @@ export default class extends PIXI.Graphics {
   index: number
   selectable = true
   coord = {x: 0, y: 0}
+  /**
+   * 四种状态: 错误，选中，相同，联动
+   */
+  statuses: [number, number, number, number] = new Proxy([0, 0, 0, 0], {
+    get: (target, k) => {
+      return target[k]
+    },
+
+    set: (target, k, v) => {
+      target[k] = v
+      if (target[0]) this.highlight(Color.Error, true)
+      else if (target[1]) this.highlight(Color.Select, true)
+      else if (target[2]) this.highlight(Color.Same, true)
+      else if (target[3]) this.highlight(Color.Connect, true)
+      else this.unhighlight()
+      return true
+    }
+  })
 
   constructor(opt: IOption) {
     super()
@@ -63,10 +81,6 @@ export default class extends PIXI.Graphics {
     this._num.text = `${v}`
     this._num.style.fill = Color.Black
     for (const item of this._items) item.visible = false
-  }
-
-  select() {
-    this.highlight(Color.Select, true)
   }
 
   highlight(color = Color.Connect, force?: boolean) {

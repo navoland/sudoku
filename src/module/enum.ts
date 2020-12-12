@@ -15,7 +15,8 @@ export enum Color {
   Select = 0xc0f0f0,
   /** 选中数字相同的 cell */
   Same = 0xffffcb,
-  Button = 0x488fdf
+  Button = 0x488fdf,
+  Error = 0xf44336
 }
 
 export enum Grade {

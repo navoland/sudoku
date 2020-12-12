@@ -22,9 +22,13 @@ grid.on('pointerdown', (e: IEvent) => {
   unhighlight()
   highlight(coord.x, coord.y)
   like(cell.value)
-  if (!cell.selectable) return selected = null
+  if (!cell.selectable) {
+    selected = null
+    return valid()
+  }
   selected = cell
-  cell.select()
+  cell.statuses[1] = 1
+  valid()
 })
 
 grid.init = function(opt) {
@@ -107,6 +111,7 @@ grid.refresh = async function(opt) {
     }
     await promise
   }
+  valid()
 }
 
 grid.switch = function(v) {
@@ -118,6 +123,7 @@ grid.erase = function() {
   if (!selected) return
   sound.play('erase.mp3')
   selected.erase()
+  valid()
 }
 
 grid.input = function(v) {
@@ -126,11 +132,57 @@ grid.input = function(v) {
     selected.value = v
     sound.play('pen.mp3')
     if (this.check()) return grid.emit('done')
+    selected.statuses[1] = 1
+    valid()
   } else {
     selected.note(v)
     sound.play('pencil.mp3')
+    valid()
   }
   save()
+}
+
+function valid() {
+  for (const row of rows) {
+    for (let i = 0, j = row.length; i < j; i++) {
+      const cell = row[i]
+      // 重置error状态
+      cell.statuses[0] = 0
+      const v = cell.value
+      if (!v) continue
+      const _i = row.findIndex(cell => cell.value === v)
+      if (i === _i) continue
+      for (const item of row) {
+        if (item.value === v && item.selectable) item.statuses[0] = 1
+      }
+    }
+  }
+
+  for (const col of cols) {
+    for (let i = 0, j = col.length; i < j; i++) {
+      const cell = col[i]
+      const v = cell.value
+      if (!v) continue
+      const _i = col.findIndex(cell => cell.value === v)
+      if (i === _i) continue
+      for (const item of col) {
+        if (item.value === v && item.selectable) item.statuses[0] = 1
+      }
+    }
+  }
+
+  for (const region of regions) {
+    for (let i = 0, j = region.length; i < j; i++) {
+      const cell = region[i]
+      const v = cell.value
+      if (!v) continue
+      const _i = region.findIndex(cell => cell.value === v)
+      if (i === _i) continue
+      for (const item of region) {
+        if (item.value === v && item.selectable) item.statuses[0] = 1
+      }
+    }
+  }
 }
 
 grid.tip = function() {
@@ -159,6 +211,7 @@ grid.restore = function(opt) {
     }
     for (const v of item.items) cell.note(v)
   }
+  valid()
 }
 
 /** 保存填写记录 */
@@ -176,7 +229,7 @@ function save() {
 function like(v: number) {
   if (!v) return
   for (const cell of cells) {
-    if (cell.value === v) cell.highlight(Color.Same, true)
+    if (cell.value === v) cell[2] = 1
   }
 }
 
@@ -191,19 +244,24 @@ grid.check = function() {
 /** 高亮关联的cell */
 function highlight(x: number, y: number) {
   for (const cell of rows[y]) {
-    cell.highlight()
+    cell.statuses[3] = 1
   }
   for (const cell of cols[x]) {
-    cell.highlight()
+    cell.statuses[3] = 1
   }
   const i = (x / 3 | 0) + (y / 3 | 0) * 3
   for (const cell of regions[i]) {
-    cell.highlight()
+    cell.statuses[3] = 1
   }
 }
 
 function unhighlight() {
-  for (const cell of cells) cell.unhighlight()
+  for (const cell of cells) {
+    cell.statuses[0] =
+    cell.statuses[1] =
+    cell.statuses[2] =
+    cell.statuses[3] = 0
+  }
 }
 
 interface IOption {
