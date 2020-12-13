@@ -20,6 +20,7 @@ export default class extends PIXI.Graphics {
     },
 
     set: (target, k, v) => {
+      if (target[k] === v) return true
       target[k] = v
       if (target[0]) this.highlight(Color.Error, true)
       else if (target[1]) this.highlight(Color.Select, true)
